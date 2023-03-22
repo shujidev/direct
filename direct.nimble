@@ -3,6 +3,7 @@
 version       = "0.1.0"
 author        = "daniel mtz"
 description   = "Nim bindings for Direct 2D."
+license       = "MIT"
 srcDir        = "src"
 
 
