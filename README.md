@@ -3,6 +3,7 @@ Nim bindings for direct 2d
 
 C bindings for Direct2d, dwrite, etc.
 
+I have tested most of direct2d including effects so everything should be fine, I might add some examples later.
 
 ## Missing parts:
 Currently functions have to be called like this example for compatibility with the C backend
