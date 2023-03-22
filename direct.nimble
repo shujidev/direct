@@ -1,7 +1,7 @@
 # Package
 
 version       = "0.1.0"
-author        = "xu"
+author        = "daniel mtz"
 description   = "Nim bindings for Direct 2D."
 srcDir        = "src"
 
