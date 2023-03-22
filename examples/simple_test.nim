@@ -17,8 +17,7 @@ proc release(x: ptr ID2D1Resource) =
     discard x.lpVtbl.Release(x)
 
 proc CreateDeviceIndependentResources() = # Initialize device-independent resources.
-    var IID_ID2D1Factory = IID(Data1:0xbb12d362'i32, Data2:0xdaee, Data3:0x4b9a, Data4: [0xaa'u8,0x1d,0x14,0xba,0x40,0x1c,0xfa,0x1f])
-    var hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, cast[ptr IID](addr IID_ID2D1Factory), nil, addr d2Factory)
+    var hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, cast[ptr IID](unsafeAddr IID_ID2D1Factory), nil, addr d2Factory)
     if hr!=S_OK: echo "D2D1CreateFactory error"
     
 proc CreateDeviceResources(hwnd: HWND, factory: ptr ID2D1Factory) = # Initialize device-dependent resources.
