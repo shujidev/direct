@@ -28,8 +28,6 @@ proc CreateDeviceResources(hwnd: HWND, factory: ptr ID2D1Factory) = # Initialize
     var props = D2D1_RENDER_TARGET_PROPERTIES()
     var hwnd_props = D2D1_HWND_RENDER_TARGET_PROPERTIES(hwnd:hwnd, pixelSize:size, presentOptions:D2D1_PRESENT_OPTIONS_NONE)
     
-    #~ echo props
-    #~ echo hwnd_props
     # Create a Direct2D render target.
     var hr = factory.lpVtbl.CreateHwndRenderTarget(factory, addr props, addr hwnd_props, cast[ptr ptr ID2D1HwndRenderTarget](addr renderTarget))
     if hr!=S_OK: echo "CreateHwndRenderTarget error"
@@ -53,17 +51,16 @@ draw = proc(hwnd:HWND)=
     var pos: D2D1_SIZE_F
     renderTarget.lpVtbl.GetSize(renderTarget, addr pos)
     
-    #~ Draw a grid background.
     var dashes = [1.0f, 2.0f, 2.0f, 3.0f, 2.0f, 2.0f]
     var strokeStyle: ptr ID2D1StrokeStyle
     var styleProps = D2D1_STROKE_STYLE_PROPERTIES(
-                    startCap:D2D1_CAP_STYLE_FLAT,
-                    endCap:D2D1_CAP_STYLE_FLAT,
-                    dashCap:D2D1_CAP_STYLE_ROUND,
-                    lineJoin:D2D1_LINE_JOIN_MITER,
-                    miterLimit:10.0f,
-                    dashStyle:D2D1_DASH_STYLE_CUSTOM,
-                    dashOffset:0.1f)
+                        startCap:D2D1_CAP_STYLE_FLAT,
+                        endCap:D2D1_CAP_STYLE_FLAT,
+                        dashCap:D2D1_CAP_STYLE_ROUND,
+                        lineJoin:D2D1_LINE_JOIN_MITER,
+                        miterLimit:10.0f,
+                        dashStyle:D2D1_DASH_STYLE_CUSTOM,
+                        dashOffset:0.1f)
     var hr = d2Factory.lpVtbl.CreateStrokeStyle(d2Factory, addr styleProps, addr dashes[0], len(dashes).UINT32, addr strokeStyle)
     if hr!=S_OK: echo "CreateStrokeStyle error"
     renderTarget.lpVtbl.DrawLine(renderTarget, D2D1_POINT_2F(x:10f, y:10f), D2D1_POINT_2F(x:100f, y:100f), brush=brush2, strokeWidth=13f, strokeStyle)
