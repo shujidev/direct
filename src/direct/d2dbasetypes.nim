@@ -1,7 +1,7 @@
-## directX bindings by Charlie Barto
+
 import winim
 import dxgitype
-import dcommon
+#~ import dcommon
 
 type 
   D2D_POINT_2U* = object 
