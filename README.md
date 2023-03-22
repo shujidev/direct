@@ -21,7 +21,7 @@ converter toDXGIDevice*(x:ptr IDXGIDevice2):ptr IDXGIDevice = cast[ptr IDXGIDevi
 ```
 
 Direct headers also include definitions to call directly the methods which I have not transcribed, they look something like this:
-```nim
+```c
 #if !defined(__cplusplus) || defined(CINTERFACE)
 /*** IUnknown methods ***/
 #define IDirectSound_QueryInterface(p,a,b) (p)->lpVtbl->QueryInterface(p,a,b)
