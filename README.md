@@ -1,14 +1,14 @@
-# direct
+## direct
 Nim bindings for Direct 2d C interface, dwrite, etc.
 
 I have tested most of direct2d including effects so everything should be fine, I might add some examples later.
 
-Installation:
+### Installation:
 ```nim
 nimble install https://github.com/shujidev/direct
 ```
 
-## Missing parts:
+### Missing parts:
 Currently functions have to be called like this example for compatibility with the C backend
 ```nim
 renderTarget.lpVtbl.BeginDraw(renderTarget)
@@ -34,7 +34,7 @@ Direct headers also include definitions to call directly the methods which I hav
 ```
 
 
-## Create functions
+### Create functions
 An object can be created with factories, this pattern can be helpful to create self destructing objects
 ```nim
 type RenderTarget* = object
