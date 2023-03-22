@@ -11,7 +11,7 @@ Currently functions have to be called like this example for compatibility with t
 renderTarget.lpVtbl.BeginDraw(renderTarget)
 ```
 
-Since there is no inheritance I think there have to be converters for the updated libraries which are derived from early classes.
+Since there is no inheritance I think there have to be converters for the updated libraries which are derived from previously released classes.
 
 Something like this for each file:
 ```nim
