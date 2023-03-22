@@ -6,14 +6,14 @@ C bindings for Direct2d, dwrite, etc.
 
 ## Missing parts:
 Currently functions have to be called like this example for compatibility with the C backend
-```
+```nim
 renderTarget.lpVtbl.BeginDraw(renderTarget)
 ```
 
 Since there is no inheritance I think there have to be converters for the updated libraries which are derived from early classes.
 
 Something like this for each file:
-```
+```nim
 converter toFactory*(x:ptr ID2D1Factory1):ptr ID2D1Factory = cast[ptr ID2D1Factory](x)
 converter toRenderTarget*(x:ptr ID2D1DeviceContext):ptr ID2D1RenderTarget = cast[ptr ID2D1RenderTarget](x)
 converter toDXGIDevice*(x:ptr IDXGIDevice1):ptr IDXGIDevice = cast[ptr IDXGIDevice](x)
@@ -21,7 +21,7 @@ converter toDXGIDevice*(x:ptr IDXGIDevice2):ptr IDXGIDevice = cast[ptr IDXGIDevi
 ```
 
 Direct headers also include definitions to call directly the methods which I have not transcribed, they look something like this:
-```
+```nim
 #if !defined(__cplusplus) || defined(CINTERFACE)
 /*** IUnknown methods ***/
 #define IDirectSound_QueryInterface(p,a,b) (p)->lpVtbl->QueryInterface(p,a,b)
@@ -32,7 +32,7 @@ Direct headers also include definitions to call directly the methods which I hav
 
 ## Create functions
 An object can be created with factories, this pattern can be helpful to create destructive objects
-```
+```nim
 type RenderTarget* = object
     p:ptr ID2D1RenderTarget
 proc `=destroy`*(x:var RenderTarget) = x.p.toResource.release
