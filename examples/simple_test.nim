@@ -43,22 +43,21 @@ proc CreateDeviceResources(hwnd: HWND, factory: ptr ID2D1Factory) = # Initialize
     hr = renderTarget.lpVtbl.CreateSolidColorBrush(renderTarget, addr color2, addr brush_props, addr brush2)
 
 
-draw=proc(hwnd:HWND)=
-    #~ echo "drawing"
+draw = proc(hwnd:HWND)=
     #~ echo "drawing"
     CreateDeviceResources(hwnd, d2Factory)
+    
     renderTarget.lpVtbl.BeginDraw(renderTarget)
     var color1 = D2D1_COLOR_F(r:1.0,g:1.0,b:1.0,a:1.0)
     renderTarget.lpVtbl.Clear(renderTarget, addr color1)
     
     var pos: D2D1_SIZE_F
-    renderTarget.lpVtbl.GetSize(renderTarget, addr pos) #width and height properties
+    renderTarget.lpVtbl.GetSize(renderTarget, addr pos)
     
-    #~ // Draw a grid background.
+    #~ Draw a grid background.
     var dashes = [1.0f, 2.0f, 2.0f, 3.0f, 2.0f, 2.0f]
     var strokeStyle: ptr ID2D1StrokeStyle
-    #~ D2D1StrokeStyleProperties(
-    var styleProps=D2D1_STROKE_STYLE_PROPERTIES(
+    var styleProps = D2D1_STROKE_STYLE_PROPERTIES(
                     startCap:D2D1_CAP_STYLE_FLAT,
                     endCap:D2D1_CAP_STYLE_FLAT,
                     dashCap:D2D1_CAP_STYLE_ROUND,
@@ -68,13 +67,13 @@ draw=proc(hwnd:HWND)=
                     dashOffset:0.1f)
     var hr = d2Factory.lpVtbl.CreateStrokeStyle(d2Factory, addr styleProps, addr dashes[0], len(dashes).UINT32, addr strokeStyle)
     if hr!=S_OK: echo "CreateStrokeStyle error"
-    #~ echo strokeStyle
     renderTarget.lpVtbl.DrawLine(renderTarget, D2D1_POINT_2F(x:10f, y:10f), D2D1_POINT_2F(x:100f, y:100f), brush=brush2, strokeWidth=13f, strokeStyle)
     
     hr = renderTarget.lpVtbl.EndDraw(renderTarget, nil, nil)
+    if hr!=S_OK: echo "EndDraw error"
     renderTarget.release
     brush1.release
     brush2.release
 
 CreateDeviceIndependentResources()
-main()
+start_window()

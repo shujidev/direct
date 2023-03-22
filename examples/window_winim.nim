@@ -8,24 +8,19 @@ proc WndProc(hwnd: HWND, message: int32, wp: WPARAM, lp: LPARAM): LRESULT {.stdc
     wmEvent: cint
     ps: PAINTSTRUCT
     hdcr: HDC
-  var wasHandled = false;
   case message:
     of WM_SIZE:
       var width = LOWORD(lp)
       var height = HIWORD(lp)
-      #resize if RenderTarget: RenderTarget->Resize(D2D1::SizeU(width, height))
-    #~ of WM_DISPLAYCHANGE:
-      #~ InvalidateRect(hwnd, nil, false);
     of WM_PAINT:
       if draw!=nil: draw(hwnd)
-      #ValidateRect(hwnd, NULL); #idles event until resizing/moving window
     of WM_DESTROY:
       PostQuitMessage(0)
     else:
       return DefWindowProc(hwnd, message, wp, lp)
   return 0.LRESULT
 
-proc main*() =
+proc start_window*() =
   var wcex: WNDCLASSEX
   wcex.cbSize = sizeof(WNDCLASSEX).int32
   wcex.lpfnWndProc = WndProc
