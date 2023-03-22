@@ -32,7 +32,7 @@ Direct headers also include definitions to call directly the methods which I hav
 
 
 ## Create functions
-An object can be created with factories, this pattern can be helpful to create destructive objects
+An object can be created with factories, this pattern can be helpful to create self destructing objects
 ```nim
 type RenderTarget* = object
     p:ptr ID2D1RenderTarget
