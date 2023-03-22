@@ -532,7 +532,6 @@ type
         
     ID2D1LayerVtbl* = object
         Base*: ID2D1ResourceVtbl
-        #~ GetSize*: proc (This:ptr ID2D1Layer): D2D1_SIZE_F {.stdcall.}
         GetSize*: proc (This:ptr ID2D1Layer, size:ptr D2D1_SIZE_F) {.stdcall.}
     ID2D1Layer* = object
         lpVtbl*: ptr ID2D1LayerVtbl
@@ -559,9 +558,9 @@ type
         Stream*: proc (This:ptr ID2D1PathGeometry, geometrySink:ptr ID2D1GeometrySink): HRESULT {.stdcall.}
         GetSegmentCount*: proc (This:ptr ID2D1PathGeometry, count:ptr UINT32): HRESULT {.stdcall.}
         GetFigureCount*: proc (This:ptr ID2D1PathGeometry, count:ptr UINT32): HRESULT {.stdcall.}
-        
     ID2D1PathGeometry* = object
         lpVtbl*: ptr ID2D1PathGeometryVtbl
+        
     ID2D1RadialGradientBrushVtbl* = object
         Base*: ID2D1BrushVtbl
         SetCenter*: proc (This:ptr ID2D1RadialGradientBrush, center:D2D1_POINT_2F) {.stdcall.}
