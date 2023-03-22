@@ -38,6 +38,7 @@ proc CreateDeviceResources(hwnd: HWND, factory: ptr ID2D1Factory) = # Initialize
     hr = renderTarget.lpVtbl.CreateSolidColorBrush(renderTarget, addr color1, addr brush_props, addr brush1)
     if hr!=S_OK: echo "CreateSolidColorBrush error"
     hr = renderTarget.lpVtbl.CreateSolidColorBrush(renderTarget, addr color2, addr brush_props, addr brush2)
+    if hr!=S_OK: echo "CreateSolidColorBrush error"
 
 
 draw = proc(hwnd:HWND)=
