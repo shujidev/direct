@@ -5,6 +5,7 @@ import dcommon
 import dwrite
 import unknwn
 import dxgi
+{.passL: "-L. -ld2d1 -lole32 ".}
 
 type 
     D2D1_POINT_2U* = D2D_POINT_2U

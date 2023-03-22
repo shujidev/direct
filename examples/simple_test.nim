@@ -3,7 +3,7 @@ import window_winim
 import winim/lean, winim/clr
 if CoInitialize(nil)!=S_OK: echo "CoInitialize error"
 
-{.passL: "-L. -ld2d1 -lole32 ".}
+
 import direct/[d2d1, d2dbasetypes]
 
 var d2Factory: ptr ID2D1Factory
