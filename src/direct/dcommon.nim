@@ -50,6 +50,7 @@ type
     #~ x*: cfloat
     #~ y*: cfloat
 
+
 type 
   D2D_POINT_2U* = object 
     x*: UINT32
@@ -62,8 +63,6 @@ type
 
   D2D_POINT_2L* = POINT
     
-  D2D1_POINT_2F* = D2D_POINT_2F
-  D2D1_POINT_2L* = POINT
   D2D_VECTOR_2F* {.bycopy.} = object
     x*: cfloat
     y*: cfloat
@@ -94,7 +93,6 @@ type
     bottom*: UINT32
 
   D2D_RECT_L* = RECT
-  D2D1_RECT_L* = RECT
   
 type 
   D2D_SIZE_F* = object 
@@ -106,14 +104,12 @@ type
     width*: UINT32
     height*: UINT32
     
-  D2D1_SIZE_U* = D2D_SIZE_U
 
 type
   #~ D3DCOLORVALUE* = object 
     #~ r,g,b,a: FLOAT
   
   D2D_COLOR_F* = D3DCOLORVALUE
-
   
   D2D_MATRIX_3X2_F* {.bycopy.} = array[6,FLOAT]
 
