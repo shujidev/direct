@@ -1,19 +1,7 @@
-## DirectX bindings by Charlie Barto
-## this file reflects the version of d3d11.h included in windows 19
-# interface __MIDL_itf_d3d11_0000_0000 
-# [local]
-#~ {.link: "dxguid.lib".}
-#~ {.link: "d3d11.lib".}
-import winim/lean, dxgi, d3dcommon #, macros, Unknwn
+
+import winim/lean, dxgi, d3dcommon
 import dxgiformat, dxgicommon
-export d3dcommon
-#~ type UINT = uint32
-#~ type INT = int32
-#~ type FLOAT = float32
-#~ type BYTE = TBYTE
-#~ type BOOL = WINBOOL
-#~ type UINT8 = uint8
-#~ type UINT64 = uint64
+
 const 
   D3D11_16BIT_INDEX_STRIP_CUT_VALUE* = (0x0000FFFF)
   D3D11_32BIT_INDEX_STRIP_CUT_VALUE* = (0xFFFFFFFF)

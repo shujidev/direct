@@ -1,29 +1,21 @@
 
-import winim
+import winim/lean
 import d3d12
 import Unknwn
-import macros
-import dxgi
-type IID = TIID
-type GUID = TGUID
-type UINT = uint32
-type INT = int32
-type FLOAT = float32
-type BYTE = TBYTE
-type BOOL = WINBOOL
-type UINT8 = uint8
-type UINT64 = uint64
-type UINT16 = uint16
+#~ import macros
+import dxgiformat
+#~ type IID = TIID
+#~ type GUID = TGUID
+#~ type UINT = uint32
+#~ type INT = int32
+#~ type FLOAT = float32
+#~ type BYTE = TBYTE
+#~ type BOOL = WINBOOL
+#~ type UINT8 = uint8
+#~ type UINT64 = uint64
+#~ type UINT16 = uint16
 
-#to generate bridge procs do a find/replace with first
-#(\w*)\*: proc (\(.*?;?)\n?\s*(.*;)?\n?\s*(.*;)?\n?\s*(.*\))(:.*)? \{\.\n?.*\.\}
-#proc $1*$2$3$4$5$6 = This.lpVtbl.$1$2$3$4$5
-#then
-#This.lpVtbl(\.\w*.*?)(:.*?;)
-#This.lpVtbl$1,
-#then
-#This.lpVtbl(\.\w*.*?)(:.*?\))
-#This.lpVtbl$1)
+
 proc QueryInterface*(This: ptr ID3D12Object; riid: ptr IID; ppvObject: ptr pointer): HRESULT = This.lpVtbl.QueryInterface(This, riid, ppvObject)
 proc AddRef*(This: ptr ID3D12Object; ): ULONG = This.lpVtbl.AddRef(This)
 proc Release*(This: ptr ID3D12Object; ): ULONG = This.lpVtbl.Release(This)

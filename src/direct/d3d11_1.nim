@@ -10,6 +10,7 @@ import dxgicommon
 #~ import dxgi1_2
 import d3dcommon
 import d3d11
+import unknwn
 #~ type UINT = uint32
 #~ type INT = int32
 #~ type FLOAT = float32
@@ -17,7 +18,7 @@ import d3d11
 #~ type UINT8 = uint8
 #~ type BYTE = cuchar
 #~ type UINT64 = uint64
-type IUnknown = object
+#~ type IUnknown = object
 
 const IID_ID3D11BlendState1* = IID(Data1:0xcc86fabe'i32, Data2:0xda55, Data3:0x401d, Data4:[0x85'u8, 0xe7, 0xe3, 0xc9, 0xde, 0x28, 0x77, 0xe9])
 const IID_ID3DDeviceContextState* = IID(Data1:0x5c1e0d8a'i32, Data2:0x7c23, Data3:0x48f9, Data4:[0x8c'u8, 0x59, 0xa9, 0x29, 0x58, 0xce, 0xff, 0x11])

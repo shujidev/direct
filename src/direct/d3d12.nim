@@ -1,19 +1,8 @@
-#direct3D wrapper by Charlie Barto
-# this file is generated from the version of d3d12.h shipped with windows 10
-{.link: "dxguid.lib".}
-{.link: "d3d12.lib".}
-import winim, dxgi, d3dcommon, macros, Unknwn
+
+#~ {.link: "dxguid.lib".}
+#~ {.link: "d3d12.lib".}
+import winim/lean, dxgiformat, dxgicommon, d3dcommon, unknwn
 export d3dcommon
-type UINT = uint32
-type INT = int32
-type FLOAT = float32
-type BYTE = TBYTE
-type BOOL = WINBOOL
-type UINT8 = uint8
-type UINT64 = uint64
-type UINT16 = uint16
-# Forward Declarations
-#procs to make some cisms work
 proc `or`(a,b:enum): auto = ord(a) or ord(b)
 proc `or`(a: enum, b: int): auto = ord(a) or b
 proc `or`(a: int, b: enum): auto = a or ord(b)
@@ -571,17 +560,6 @@ type
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 # Note, the array size for RenderTarget[] above is D3D12_SIMULTANEOUS_RENDERTARGET_COUNT.
 #   IDL processing/generation of this header replaces the define; this comment is merely explaining what happened.
 
@@ -607,17 +585,12 @@ type
 
 type
   ID3D12ObjectVtbl* = object
-    QueryInterface*: proc (This: ptr ID3D12Object; riid: ptr IID;
-                           ppvObject: ptr pointer): HRESULT {.stdcall.}
+    QueryInterface*: proc (This: ptr ID3D12Object; riid: ptr IID; ppvObject: ptr pointer): HRESULT {.stdcall.}
     AddRef*: proc (This: ptr ID3D12Object): ULONG {.stdcall.}
     Release*: proc (This: ptr ID3D12Object): ULONG {.stdcall.}
-    GetPrivateData*: proc (This: ptr ID3D12Object; guid: ptr GUID;
-                           pDataSize: ptr UINT; pData: pointer): HRESULT {.
-        stdcall.}
-    SetPrivateData*: proc (This: ptr ID3D12Object; guid: ptr GUID;
-                           DataSize: UINT; pData: pointer): HRESULT {.stdcall.}
-    SetPrivateDataInterface*: proc (This: ptr ID3D12Object; guid: ptr GUID;
-                                    pData: ptr Unknwn.IUnknown): HRESULT {.stdcall.}
+    GetPrivateData*: proc (This: ptr ID3D12Object; guid: ptr GUID; pDataSize: ptr UINT; pData: pointer): HRESULT {.stdcall.}
+    SetPrivateData*: proc (This: ptr ID3D12Object; guid: ptr GUID; DataSize: UINT; pData: pointer): HRESULT {.stdcall.}
+    SetPrivateDataInterface*: proc (This: ptr ID3D12Object; guid: ptr GUID; pData: ptr IUnknown): HRESULT {.stdcall.}
     SetName*: proc (This: ptr ID3D12Object; Name: LPCWSTR): HRESULT {.stdcall.}
 
   ID3D12Object* = object
@@ -633,15 +606,12 @@ type
                            ppvObject: ptr pointer): HRESULT {.stdcall.}
     AddRef*: proc (This: ptr ID3D12DeviceChild): ULONG {.stdcall.}
     Release*: proc (This: ptr ID3D12DeviceChild): ULONG {.stdcall.}
-    GetPrivateData*: proc (This: ptr ID3D12DeviceChild; guid: ptr GUID;
-                           pDataSize: ptr UINT; pData: pointer): HRESULT {.
-        stdcall.}
+    GetPrivateData*: proc (This: ptr ID3D12DeviceChild; guid: ptr GUID; pDataSize: ptr UINT; pData: pointer): HRESULT {.stdcall.}
     SetPrivateData*: proc (This: ptr ID3D12DeviceChild; guid: ptr GUID;
                            DataSize: UINT; pData: pointer): HRESULT {.stdcall.}
     SetPrivateDataInterface*: proc (This: ptr ID3D12DeviceChild; guid: ptr GUID;
-                                    pData: ptr Unknwn.IUnknown): HRESULT {.stdcall.}
-    SetName*: proc (This: ptr ID3D12DeviceChild; Name: LPCWSTR): HRESULT {.
-        stdcall.}
+                                    pData: ptr unknwn.IUnknown): HRESULT {.stdcall.}
+    SetName*: proc (This: ptr ID3D12DeviceChild; Name: LPCWSTR): HRESULT {.stdcall.}
     GetDevice*: proc (This: ptr ID3D12DeviceChild; riid: ptr IID;
                       ppvDevice: ptr pointer): HRESULT {.stdcall.}
 
@@ -664,7 +634,7 @@ type
     SetPrivateData*: proc (This: ptr ID3D12RootSignature; guid: ptr GUID;
                            DataSize: UINT; pData: pointer): HRESULT {.stdcall.}
     SetPrivateDataInterface*: proc (This: ptr ID3D12RootSignature;
-                                    guid: ptr GUID; pData: ptr Unknwn.IUnknown): HRESULT {.
+                                    guid: ptr GUID; pData: ptr unknwn.IUnknown): HRESULT {.
         stdcall.}
     SetName*: proc (This: ptr ID3D12RootSignature; Name: LPCWSTR): HRESULT {.
         stdcall.}
@@ -1031,7 +1001,7 @@ type
     SetPrivateData*: proc (This: ptr ID3D12Resource; guid: ptr GUID;
                            DataSize: UINT; pData: pointer): HRESULT {.stdcall.}
     SetPrivateDataInterface*: proc (This: ptr ID3D12Resource; guid: ptr GUID;
-                                    pData: ptr Unknwn.IUnknown): HRESULT {.stdcall.}
+                                    pData: ptr unknwn.IUnknown): HRESULT {.stdcall.}
     SetName*: proc (This: ptr ID3D12Resource; Name: LPCWSTR): HRESULT {.stdcall.}
     GetDevice*: proc (This: ptr ID3D12Resource; riid: ptr IID;
                       ppvDevice: ptr pointer): HRESULT {.stdcall.}
@@ -1761,7 +1731,7 @@ type
     SetPrivateData*: proc (This: ptr ID3D12Pageable; guid: ptr GUID;
                            DataSize: UINT; pData: pointer): HRESULT {.stdcall.}
     SetPrivateDataInterface*: proc (This: ptr ID3D12Pageable; guid: ptr GUID;
-                                    pData: ptr Unknwn.IUnknown): HRESULT {.stdcall.}
+                                    pData: ptr unknwn.IUnknown): HRESULT {.stdcall.}
     SetName*: proc (This: ptr ID3D12Pageable; Name: LPCWSTR): HRESULT {.stdcall.}
     GetDevice*: proc (This: ptr ID3D12Pageable; riid: ptr IID;
                       ppvDevice: ptr pointer): HRESULT {.stdcall.}
@@ -1786,7 +1756,7 @@ type
     SetPrivateData*: proc (This: ptr ID3D12Heap; guid: ptr GUID; DataSize: UINT;
                            pData: pointer): HRESULT {.stdcall.}
     SetPrivateDataInterface*: proc (This: ptr ID3D12Heap; guid: ptr GUID;
-                                    pData: ptr Unknwn.IUnknown): HRESULT {.stdcall.}
+                                    pData: ptr unknwn.IUnknown): HRESULT {.stdcall.}
     SetName*: proc (This: ptr ID3D12Heap; Name: LPCWSTR): HRESULT {.stdcall.}
     GetDevice*: proc (This: ptr ID3D12Heap; riid: ptr IID;
                       ppvDevice: ptr pointer): HRESULT {.stdcall.}
@@ -1818,7 +1788,7 @@ type
     SetPrivateData*: proc (This: ptr ID3D12CommandAllocator; guid: ptr GUID;
                            DataSize: UINT; pData: pointer): HRESULT {.stdcall.}
     SetPrivateDataInterface*: proc (This: ptr ID3D12CommandAllocator;
-                                    guid: ptr GUID; pData: ptr Unknwn.IUnknown): HRESULT {.
+                                    guid: ptr GUID; pData: ptr unknwn.IUnknown): HRESULT {.
         stdcall.}
     SetName*: proc (This: ptr ID3D12CommandAllocator; Name: LPCWSTR): HRESULT {.
         stdcall.}
@@ -1846,7 +1816,7 @@ type
     SetPrivateData*: proc (This: ptr ID3D12Fence; guid: ptr GUID;
                            DataSize: UINT; pData: pointer): HRESULT {.stdcall.}
     SetPrivateDataInterface*: proc (This: ptr ID3D12Fence; guid: ptr GUID;
-                                    pData: ptr Unknwn.IUnknown): HRESULT {.stdcall.}
+                                    pData: ptr unknwn.IUnknown): HRESULT {.stdcall.}
     SetName*: proc (This: ptr ID3D12Fence; Name: LPCWSTR): HRESULT {.stdcall.}
     GetDevice*: proc (This: ptr ID3D12Fence; riid: ptr IID;
                       ppvDevice: ptr pointer): HRESULT {.stdcall.}
@@ -1875,7 +1845,7 @@ type
     SetPrivateData*: proc (This: ptr ID3D12PipelineState; guid: ptr GUID;
                            DataSize: UINT; pData: pointer): HRESULT {.stdcall.}
     SetPrivateDataInterface*: proc (This: ptr ID3D12PipelineState;
-                                    guid: ptr GUID; pData: ptr Unknwn.IUnknown): HRESULT {.
+                                    guid: ptr GUID; pData: ptr unknwn.IUnknown): HRESULT {.
         stdcall.}
     SetName*: proc (This: ptr ID3D12PipelineState; Name: LPCWSTR): HRESULT {.
         stdcall.}
@@ -1904,7 +1874,7 @@ type
     SetPrivateData*: proc (This: ptr ID3D12DescriptorHeap; guid: ptr GUID;
                            DataSize: UINT; pData: pointer): HRESULT {.stdcall.}
     SetPrivateDataInterface*: proc (This: ptr ID3D12DescriptorHeap;
-                                    guid: ptr GUID; pData: ptr Unknwn.IUnknown): HRESULT {.
+                                    guid: ptr GUID; pData: ptr unknwn.IUnknown): HRESULT {.
         stdcall.}
     SetName*: proc (This: ptr ID3D12DescriptorHeap; Name: LPCWSTR): HRESULT {.
         stdcall.}
@@ -1938,7 +1908,7 @@ type
     SetPrivateData*: proc (This: ptr ID3D12QueryHeap; guid: ptr GUID;
                            DataSize: UINT; pData: pointer): HRESULT {.stdcall.}
     SetPrivateDataInterface*: proc (This: ptr ID3D12QueryHeap; guid: ptr GUID;
-                                    pData: ptr Unknwn.IUnknown): HRESULT {.stdcall.}
+                                    pData: ptr unknwn.IUnknown): HRESULT {.stdcall.}
     SetName*: proc (This: ptr ID3D12QueryHeap; Name: LPCWSTR): HRESULT {.stdcall.}
     GetDevice*: proc (This: ptr ID3D12QueryHeap; riid: ptr IID;
                       ppvDevice: ptr pointer): HRESULT {.stdcall.}
@@ -1963,7 +1933,7 @@ type
     SetPrivateData*: proc (This: ptr ID3D12CommandSignature; guid: ptr GUID;
                            DataSize: UINT; pData: pointer): HRESULT {.stdcall.}
     SetPrivateDataInterface*: proc (This: ptr ID3D12CommandSignature;
-                                    guid: ptr GUID; pData: ptr Unknwn.IUnknown): HRESULT {.
+                                    guid: ptr GUID; pData: ptr unknwn.IUnknown): HRESULT {.
         stdcall.}
     SetName*: proc (This: ptr ID3D12CommandSignature; Name: LPCWSTR): HRESULT {.
         stdcall.}
@@ -1989,7 +1959,7 @@ type
     SetPrivateData*: proc (This: ptr ID3D12CommandList; guid: ptr GUID;
                            DataSize: UINT; pData: pointer): HRESULT {.stdcall.}
     SetPrivateDataInterface*: proc (This: ptr ID3D12CommandList; guid: ptr GUID;
-                                    pData: ptr Unknwn.IUnknown): HRESULT {.stdcall.}
+                                    pData: ptr unknwn.IUnknown): HRESULT {.stdcall.}
     SetName*: proc (This: ptr ID3D12CommandList; Name: LPCWSTR): HRESULT {.
         stdcall.}
     GetDevice*: proc (This: ptr ID3D12CommandList; riid: ptr IID;
@@ -2017,7 +1987,7 @@ type
     SetPrivateData*: proc (This: ptr ID3D12GraphicsCommandList; guid: ptr GUID;
                            DataSize: UINT; pData: pointer): HRESULT {.stdcall.}
     SetPrivateDataInterface*: proc (This: ptr ID3D12GraphicsCommandList;
-                                    guid: ptr GUID; pData: ptr Unknwn.IUnknown): HRESULT {.
+                                    guid: ptr GUID; pData: ptr unknwn.IUnknown): HRESULT {.
         stdcall.}
     SetName*: proc (This: ptr ID3D12GraphicsCommandList; Name: LPCWSTR): HRESULT {.
         stdcall.}
@@ -2217,7 +2187,7 @@ type
     SetPrivateData*: proc (This: ptr ID3D12CommandQueue; guid: ptr GUID;
                            DataSize: UINT; pData: pointer): HRESULT {.stdcall.}
     SetPrivateDataInterface*: proc (This: ptr ID3D12CommandQueue;
-                                    guid: ptr GUID; pData: ptr Unknwn.IUnknown): HRESULT {.
+                                    guid: ptr GUID; pData: ptr unknwn.IUnknown): HRESULT {.
         stdcall.}
     SetName*: proc (This: ptr ID3D12CommandQueue; Name: LPCWSTR): HRESULT {.
         stdcall.}
@@ -2280,7 +2250,7 @@ type
     SetPrivateData*: proc (This: ptr ID3D12Device; guid: ptr GUID;
                            DataSize: UINT; pData: pointer): HRESULT {.stdcall.}
     SetPrivateDataInterface*: proc (This: ptr ID3D12Device; guid: ptr GUID;
-                                    pData: ptr Unknwn.IUnknown): HRESULT {.stdcall.}
+                                    pData: ptr unknwn.IUnknown): HRESULT {.stdcall.}
     SetName*: proc (This: ptr ID3D12Device; Name: LPCWSTR): HRESULT {.stdcall.}
     GetNodeCount*: proc (This: ptr ID3D12Device): UINT {.stdcall.}
     CreateCommandQueue*: proc (This: ptr ID3D12Device;
@@ -3673,11 +3643,11 @@ var IID_ID3D12InfoQueue* {.importc.}: GUID
 #/////////////////////////////////////////////////////////////////////////
 
 type
-  PFN_D3D12_CREATE_DEVICE* = proc (a2: ptr Unknwn.IUnknown; a3: D3D_FEATURE_LEVEL;
+  PFN_D3D12_CREATE_DEVICE* = proc (a2: ptr unknwn.IUnknown; a3: D3D_FEATURE_LEVEL;
                                    a4: ptr IID; a5: ptr pointer): HRESULT {.
       stdcall.}
 
-proc D3D12CreateDevice*(pAdapter: ptr Unknwn.IUnknown;
+proc D3D12CreateDevice*(pAdapter: ptr unknwn.IUnknown;
                         MinimumFeatureLevel: D3D_FEATURE_LEVEL; riid: ptr IID;
                         ppDevice: ptr pointer): HRESULT {.stdcall, importc.}
   # Expected: ID3D12Device

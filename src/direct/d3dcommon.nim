@@ -1,11 +1,5 @@
-## DirectX Bindings by Charlie Barto
-## This file mirrors the d3dcommon.h file found
-## in the windows 10 SDK
-# interface __MIDL_itf_d3dcommon_0000_0000 
-# [local] 
-import winim
-type UINT = uint32
-type BYTE = TBYTE
+
+import winim/lean
 type 
   D3D_DRIVER_TYPE* {.size: sizeof(cint).} = enum 
     D3D_DRIVER_TYPE_UNKNOWN = 0, 

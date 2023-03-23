@@ -1,25 +1,4 @@
-##DirectX bindings by charlie barto
-## This file mirrors the version of dxgiformat shipped with
-## windows 10
 
-# this ALWAYS GENERATED file contains the definitions for the interfaces 
-# File created by MIDL compiler version 8.00.0603 
-# at Mon May 19 17:37:06 2014
-# 
-# Compiler settings for dxgiformat.idl:
-#    Oicf, W1, Zp8, env=Win64 (32b run), target_arch=AMD64 8.00.0603 
-#    protocol : dce , ms_ext, c_ext, robust
-#    error checks: allocation ref bounds_check enum stub_data , no_format_optimization
-#    VC __declspec() decoration level: 
-#         __declspec(uuid()), __declspec(selectany), __declspec(novtable)
-#         DECLSPEC_UUID(), MIDL_INTERFACE()
-#
-# @@MIDL_FILE_HEADING(  ) 
-# Forward Declarations 
-# interface __MIDL_itf_dxgiformat_0000_0000 
-# [local] 
-type UINT = uint32
-type INT = int32
 type 
   DXGI_FORMAT* {.size: sizeof(cint).} = enum 
     DXGI_FORMAT_UNKNOWN = 0, DXGI_FORMAT_R32G32B32A32_TYPELESS = 1, 
@@ -83,10 +62,3 @@ type
     DXGI_FORMAT_P208 = 130, DXGI_FORMAT_V208 = 131,
     DXGI_FORMAT_V408 = 132,
     DXGI_FORMAT_FORCE_UINT = 0xFFFFFFFF
-
-#var __MIDL_itf_dxgiformat_0000_0000_v0_0_c_ifspec* {.importc.}: RPC_IF_HANDLE
-
-#var __MIDL_itf_dxgiformat_0000_0000_v0_0_s_ifspec* {.importc.}: RPC_IF_HANDLE
-
-# Additional Prototypes for ALL interfaces 
-# end of Additional Prototypes 

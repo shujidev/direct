@@ -9,6 +9,7 @@ type
         Release*: proc (This:ptr IUnknown): ULONG {.stdcall.}
     IUnknown* = object
         lpVtbl*: ptr IUnknownVtbl
+        
     AsyncIUnknownVtbl* = object
         QueryInterface*: proc (This:ptr AsyncIUnknown, riid:ptr IID, ppvObject:ptr pointer): HRESULT {.stdcall.}
         AddRef*: proc (This:ptr AsyncIUnknown): ULONG {.stdcall.}
@@ -21,6 +22,7 @@ type
         Finish_Release*: proc (This:ptr AsyncIUnknown): ULONG {.stdcall.}
     AsyncIUnknown* = object
         lpVtbl*: ptr AsyncIUnknownVtbl
+        
     IClassFactoryVtbl* = object
         QueryInterface*: proc (This:ptr IClassFactory, riid:ptr IID, ppvObject:ptr pointer): HRESULT {.stdcall.}
         AddRef*: proc (This:ptr IClassFactory): ULONG {.stdcall.}

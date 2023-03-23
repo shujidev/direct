@@ -1,16 +1,7 @@
-## DirectX bindings by Charlie Barto
-#+--------------------------------------------------------------------------
-#
-#  Copyright (c) Microsoft Corporation.  All rights reserved.
-#
-#  Abstract:
-#     Public API definitions for DWrite, D2D and DImage.
-#
-#----------------------------------------------------------------------------
+
 import winim/lean
 import dxgiformat
 import dxgitype
-#~ import d2dbasetypes
 
 type IDXGISurface = object
 
@@ -45,10 +36,6 @@ type
   D2D1_PIXEL_FORMAT* {.bycopy.} = object
     format*: DXGI_FORMAT
     alphaMode*: D2D1_ALPHA_MODE
-
-  #~ D2D_POINT_2F* {.bycopy.} = object
-    #~ x*: cfloat
-    #~ y*: cfloat
 
 
 type 
