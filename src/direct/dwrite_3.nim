@@ -1,5 +1,5 @@
 import winim/lean
-import dcommon, dwrite, dwrite_1, dwrite_2
+import d2d1, dcommon, dwrite, dwrite_1, dwrite_2
 #~ import d2d1, d2d1_1helper
 
 const IID_IDWriteFontDownloadListener* = IID(Data1:0xb06fe5b9'i32, Data2:0x43ec, Data3:0x4393, Data4:[0x88'u8, 0x1b, 0xdb, 0xe4, 0xdc, 0x72, 0xfd, 0xa7])
