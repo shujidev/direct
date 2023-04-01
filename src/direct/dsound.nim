@@ -1,6 +1,8 @@
 import winim/lean
 import unknwn
 
+{.passL: "-L. -ldsound ".}
+
 type
   WAVEFORMATEX* {.bycopy.} = object
     wFormatTag*: WORD
@@ -1078,8 +1080,9 @@ type
 #define DirectSoundFullDuplexCreate8 DirectSoundFullDuplexCreate
 #~ extern HRESULT WINAPI GetDeviceID(ptr GUID lpGuidSrc, ptr GUID lpGuidDest);
 
-type DSENUMCALLBACKW* = proc(guid:ptr GUID,str:ptr WCHAR, str2:ptr WCHAR, p:pointer): BOOL
-type DSENUMCALLBACKA* = proc(guid:ptr GUID,str:ptr CHAR, str2:ptr CHAR, p:pointer): BOOL
+type DSENUMCALLBACKW* = proc(guid:ptr GUID,str:ptr WCHAR, str2:ptr WCHAR, p:pointer): BOOL {.cdecl.}
+type DSENUMCALLBACKA* = proc(guid:ptr GUID,str:ptr CHAR, str2:ptr CHAR, p:pointer): BOOL {.cdecl.}
+type LPDSENUMCALLBACKA* = ptr DSENUMCALLBACKA
 
 proc DirectSoundCreate*(lpGUID:ptr GUID, ppDS:ptr ptr IDirectSound, pUnkOuter:ptr IUnknown): HRESULT {.stdcall, importc.}
 proc DirectSoundEnumerateA*(cb:ptr DSENUMCALLBACKA, p:pointer): HRESULT {.stdcall, importc.}
@@ -1087,7 +1090,7 @@ proc DirectSoundEnumerateW*(cb:ptr DSENUMCALLBACKW, p:pointer): HRESULT {.stdcal
 
 proc DirectSoundCaptureCreate*(lpGUID:ptr GUID, ppDSC:ptr ptr IDirectSoundCapture, pUnkOuter:ptr IUnknown): HRESULT {.stdcall, importc.}
 proc DirectSoundCaptureEnumerateA*(cb:ptr DSENUMCALLBACKA, p:pointer): HRESULT {.stdcall, importc.}
-proc DirectSoundCaptureEnumerateW*(cb:ptr DSENUMCALLBACKW, p:pointer): HRESULT {.stdcall, importc.}
+proc DirectSoundCaptureEnumerateW*(cb:DSENUMCALLBACKW, p:pointer): HRESULT {.stdcall, importc.}
 
 proc DirectSoundCreate8*(lpGUID:ptr GUID, ppDS8:ptr ptr IDirectSound8, pUnkOuter:ptr IUnknown): HRESULT {.stdcall, importc.}
 proc DirectSoundCaptureCreate8*(lpGUID:ptr GUID, ppDSC8:ptr ptr IDirectSoundCapture, pUnkOuter:ptr IUnknown): HRESULT {.stdcall, importc.}
