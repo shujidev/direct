@@ -7,6 +7,23 @@ import unknwn
 import dxgi
 {.passL: "-L. -ld2d1 -lole32 ".}
 
+#~ proc RGBA_GETALPHA(rgb) = rgb shr 24
+#~ proc RGBA_GETRED(rgb) = (rgb shr 16) and 0xff
+#~ proc RGBA_GETGREEN(rgb) = (rgb shr 8) and 0xff
+#~ proc RGBA_GETBLUE(rgb) = rgb and 0xff
+#~ proc RGBA_MAKE(r, g, b, a) = (a shl 24) or (r shl 16) or (g shl 8) or b
+
+#~ proc D3DRGB(r, g, b) = 0xff000000 or ( ((LONG)(r * 255)) shl 16) or (((LONG)(g * 255)) shl 8) or (LONG)(b * 255)
+#~ proc D3DRGBA(r, g, b, a) = (((LONG)(a * 255)) shl 24) or (((LONG)((r) * 255)) shl 16) or (((LONG)(g * 255)) shl 8) or (LONG)(b * 255)
+
+#~ proc RGB_GETRED(rgb) = (rgb shr 16) and 0xff
+#~ proc RGB_GETGREEN(rgb) = (rgb shr 8) and 0xff
+#~ proc RGB_GETBLUE(rgb) = rgb and 0xff
+#~ proc RGBA_SETALPHA(rgba, x) = (x shl 24) or (rgba and 0x00ffffff)
+#~ proc RGB_MAKE(r, g, b) = (r shl 16) or (g shl 8) or b
+#~ proc RGBA_TORGB(rgba) = rgba and 0xffffff
+#~ proc RGB_TORGBA(rgb) = rgb or 0xff000000
+
 type 
     D2D1_POINT_2U* = D2D_POINT_2U
     D2D1_POINT_2F* = D2D_POINT_2F
