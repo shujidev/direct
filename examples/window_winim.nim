@@ -55,4 +55,3 @@ proc start_window*() =
             discard DispatchMessage(addr message)
     programResult = cast[int](message.wparam)
   
-#~ main()
