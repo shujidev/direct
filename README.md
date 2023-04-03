@@ -1,5 +1,5 @@
 ## direct
-Nim bindings for Direct 2d C interface, dwrite, etc.
+Nim bindings for Direct 2d C interface, dwrite, deffects, xaudio2, etc.
 
 I have tested most of direct2d including effects so everything should be fine, I might add some examples later.
 
