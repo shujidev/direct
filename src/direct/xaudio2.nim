@@ -18,7 +18,31 @@ const IID_IXAudio27* = IID(Data1:0x8bcf1f58'i32, Data2:0x9fe7, Data3:0x4583, Dat
 const IID_IXAudio28* = IID(Data1:0x60d8dac8'i32, Data2:0x5aa1, Data3:0x4e8e, Data4:[0xb5'u8, 0x97, 0x2f, 0x5e, 0x28, 0x83, 0xd4, 0x84])
 const IID_IXAudio2* = IID(Data1:0x2b02e3cf'i32, Data2:0x2e0b, Data3:0x4ec3, Data4:[0xbe'u8, 0x45, 0x1b, 0x2a, 0x3f, 0xe7, 0x21, 0x0d])
 
-#~ const XAUDIO2_DEFAULT_PROCESSOR*  =  0xffffffff
+#Windows definitions
+const WAVE_FORMAT_PCM* = 0x1
+const WAVE_FORMAT_IEEE_FLOAT* = 0x3
+type
+    SAMPLES_UNION*  {.bycopy,  union.}  =  object
+        wValidBitsPerSample*:  WORD
+        wSamplesPerBlock*:  WORD
+        wReserved*:  WORD
+
+    WAVEFORMATEX*  {.bycopy.}  =  object
+        wFormatTag*:  WORD
+        nChannels*:  WORD
+        nSamplesPerSec*:  DWORD
+        nAvgBytesPerSec*:  DWORD
+        nBlockAlign*:  WORD
+        wBitsPerSample*:  WORD
+        cbSize*:  WORD
+
+    WAVEFORMATEXTENSIBLE*  {.bycopy.}  =  object
+        Format*:  WAVEFORMATEX
+        Samples*:  SAMPLES_UNION
+        dwChannelMask*:  DWORD
+        SubFormat*:  GUID
+       
+#XAudio2
 const
   XAUDIO2_MAX_BUFFER_BYTES* = (0x80000000)
   XAUDIO2_MAX_QUEUED_BUFFERS* = (64)
@@ -46,25 +70,6 @@ const
 const XAUDIO2_DEFAULT_PROCESSOR*  =  0xffffffff
 #~ const XAUDIO2_DEFAULT_PROCESSOR*  =  0x1
 type
-    SAMPLES_UNION*  {.bycopy,  union.}  =  object
-        wValidBitsPerSample*:  WORD
-        wSamplesPerBlock*:  WORD
-        wReserved*:  WORD
-
-    WAVEFORMATEX*  {.bycopy.}  =  object
-        wFormatTag*:  WORD
-        nChannels*:  WORD
-        nSamplesPerSec*:  DWORD
-        nAvgBytesPerSec*:  DWORD
-        nBlockAlign*:  WORD
-        wBitsPerSample*:  WORD
-        cbSize*:  WORD
-
-    WAVEFORMATEXTENSIBLE*  {.bycopy.}  =  object
-        Format*:  WAVEFORMATEX
-        Samples*:  SAMPLES_UNION
-        dwChannelMask*:  DWORD
-        SubFormat*:  GUID
 
     XAUDIO2_WINDOWS_PROCESSOR_SPECIFIER*  {.size: sizeof(UINT32).} =  enum
         Processor1  =  0x1,  Processor2  =  0x2,  Processor3  =  0x4,  Processor4  =  0x8,

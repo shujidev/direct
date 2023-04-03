@@ -121,9 +121,12 @@ proc loadAudioData(filename="Ensoniq-SQ-1-Open-Hi-Hat.wav"): (XAUDIO2_BUFFER,WAV
     buffer.AudioBytes = dwChunkSize;  #size of the audio buffer in bytes
     buffer.pAudioData = addr dataBuffer[0]  #buffer containing audio data
     buffer.Flags = XAUDIO2_END_OF_STREAM # tell the source voice not to expect any data after this buffer
+    #~ buffer.LoopCount = 2 # number of loops after first play
+    #~ buffer.PlayBegin = 10000 #not sure how it works
     return (buffer,wfx)
 
 
+#TEST WITHOUT CALLBACKS
 #Play audio file
 #~ let (buffer, waveFormat) = loadAudioData()
 #~ var pSourceVoice:ptr IXAudio2SourceVoice
@@ -137,7 +140,7 @@ proc loadAudioData(filename="Ensoniq-SQ-1-Open-Hi-Hat.wav"): (XAUDIO2_BUFFER,WAV
 #~ start_window()
 
 
-#TESTING WITH CALLBACKS
+#TEST WITH CALLBACKS
 var audioBusy = false
 
 proc playSound(xaudioSourceVoice:ptr IXAudio2SourceVoice, xaudioBuffer:XAUDIO2_BUFFER) =
@@ -169,10 +172,10 @@ let (buffer, waveFormat) = loadAudioData()
 var pSourceVoice:ptr IXAudio2SourceVoice
 hr = pXAudio2.lpVtbl.CreateSourceVoice(pXAudio2, &pSourceVoice, cast[ptr WAVEFORMATEX](&waveFormat), 0, XAUDIO2_DEFAULT_FREQ_RATIO, addr audioCallback)
 if hr!=S_OK: echo "CreateSourceVoice error ",hr.toHex
-hr = pSourceVoice.lpVtbl.SubmitSourceBuffer(pSourceVoice, &buffer)
-if hr!=S_OK: echo "SubmitSourceBuffer error ",hr.toHex
 hr = pSourceVoice.lpVtbl.Start(pSourceVoice, 0)
 if hr!=S_OK: echo "Start error ",hr.toHex
+hr = pSourceVoice.lpVtbl.SubmitSourceBuffer(pSourceVoice, &buffer)
+if hr!=S_OK: echo "SubmitSourceBuffer error ",hr.toHex
 
 #press a key to play a sound when audio is not busy
 keydown = proc(hwnd:HWND) = 
@@ -180,25 +183,3 @@ keydown = proc(hwnd:HWND) =
     pSourceVoice.playSound(buffer)
     
 start_window()
-
-#test for generating audio (not finished)
-#~ var format:WAVEFORMATEX
-#~ format.cbSize = 24932
-#~ format.wFormatTag = 1
-#~ format.nChannels = 2
-#~ format.nSamplesPerSec = 44100
-#~ format.nAvgBytesPerSec = 176400
-#~ format.nBlockAlign = 4
-#~ format.wBitsPerSample = 16
-#~ var activeChannels, idleChannels:seq[Channel] #idle channels go to active while playing, when finished they return to idleChannels
-#~ var nChannels = 64
-#~ for i in 0..<nChannels:
-    #~ idleChannels.add Channel(obj)
-
-#~ proc play(s:Sound) =
-    #~ if idleChannels.len!=0:
-        #~ activeChannels.add idleChannels[^1]
-        #~ activeChannels[^1].play(s) 
-#~ proc deactivateChannel(channel:Channel) =
-    #~ idleChannels.add channel
-    #~ activeChannels.delete activeChannels.find(channel)
