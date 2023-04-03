@@ -55,7 +55,8 @@ var timbreSoundData: array[samples * channels, int16]
     #~ index.inc
     #~ volumeSoundData[index] = value
     #~ index.inc
-    
+
+#variation on frequency (pitch)
 var index:int
 var angle:float
 for sample in 0..<samples:
