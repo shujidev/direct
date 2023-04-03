@@ -8,14 +8,6 @@ import direct/xaudio2
 #Initialization
 var pXAudio2: ptr IXAudio2
 var pMaster: ptr IXAudio2MasteringVoice
-var format:WAVEFORMATEX
-format.cbSize = 24932
-format.wFormatTag = 1
-format.nChannels = 2
-format.nSamplesPerSec = 44100
-format.nAvgBytesPerSec = 176400
-format.nBlockAlign = 4
-format.wBitsPerSample = 16
 var hr = XAudio2Create(addr pXAudio2, flags=0, XAUDIO2_PROCESSOR XAUDIO2_DEFAULT_PROCESSOR)
 if hr!=S_OK: echo "XAudio2Create error ", hr.toHex
 
@@ -143,6 +135,16 @@ if hr!=S_OK: echo "Start error ",hr.toHex
 
 start_window()
 
+
+#test for generating audio (not finished)
+#~ var format:WAVEFORMATEX
+#~ format.cbSize = 24932
+#~ format.wFormatTag = 1
+#~ format.nChannels = 2
+#~ format.nSamplesPerSec = 44100
+#~ format.nAvgBytesPerSec = 176400
+#~ format.nBlockAlign = 4
+#~ format.wBitsPerSample = 16
 #~ var activeChannels, idleChannels:seq[Channel] #idle channels go to active while playing, when finished they return to idleChannels
 #~ var nChannels = 64
 #~ for i in 0..<nChannels:
