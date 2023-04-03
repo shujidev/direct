@@ -1,5 +1,6 @@
 import winim/lean
 import unknwn
+{.passL: "-L. -lxaudio2_8 ".}
 
 const CLSID_XAudio20* = IID(Data1:0xfac23f48'i32, Data2:0x31f5, Data3:0x45a8, Data4:[0xb4'u8, 0x9b, 0x52, 0x25, 0xd6, 0x14, 0x01, 0xaa])
 const CLSID_XAudio21* = IID(Data1:0xe21a7345'i32, Data2:0xeb21, Data3:0x468e, Data4:[0xbe'u8, 0x50, 0x80, 0x4d, 0xb9, 0x7c, 0xf7, 0x08])
@@ -17,7 +18,7 @@ const IID_IXAudio27* = IID(Data1:0x8bcf1f58'i32, Data2:0x9fe7, Data3:0x4583, Dat
 const IID_IXAudio28* = IID(Data1:0x60d8dac8'i32, Data2:0x5aa1, Data3:0x4e8e, Data4:[0xb5'u8, 0x97, 0x2f, 0x5e, 0x28, 0x83, 0xd4, 0x84])
 const IID_IXAudio2* = IID(Data1:0x2b02e3cf'i32, Data2:0x2e0b, Data3:0x4ec3, Data4:[0xbe'u8, 0x45, 0x1b, 0x2a, 0x3f, 0xe7, 0x21, 0x0d])
 
-const XAUDIO2_DEFAULT_PROCESSOR*  =  0xffffffff
+#~ const XAUDIO2_DEFAULT_PROCESSOR*  =  0xffffffff
 const
   XAUDIO2_MAX_BUFFER_BYTES* = (0x80000000)
   XAUDIO2_MAX_QUEUED_BUFFERS* = (64)
@@ -42,6 +43,8 @@ const
   XAUDIO2_DEFAULT_CHANNELS* = (0)
   XAUDIO2_DEFAULT_SAMPLERATE* = (0)
   
+const XAUDIO2_DEFAULT_PROCESSOR*  =  0xffffffff
+#~ const XAUDIO2_DEFAULT_PROCESSOR*  =  0x1
 type
     SAMPLES_UNION*  {.bycopy,  union.}  =  object
         wValidBitsPerSample*:  WORD
@@ -63,7 +66,7 @@ type
         dwChannelMask*:  DWORD
         SubFormat*:  GUID
 
-    XAUDIO2_WINDOWS_PROCESSOR_SPECIFIER*  =  enum
+    XAUDIO2_WINDOWS_PROCESSOR_SPECIFIER*  {.size: sizeof(UINT32).} =  enum
         Processor1  =  0x1,  Processor2  =  0x2,  Processor3  =  0x4,  Processor4  =  0x8,
         Processor5  =  0x10,  Processor6  =  0x20,  Processor7  =  0x40,  Processor8  =  0x80,
         Processor9  =  0x100,  Processor10  =  0x200,  Processor11  =  0x400,  Processor12  =  0x800,
@@ -233,18 +236,18 @@ type
         GetVoiceDetails*: proc (This:ptr IXAudio20Voice, pVoiceDetails:ptr XAUDIO27_VOICE_DETAILS) {.stdcall.}
         SetOutputVoices*: proc (This:ptr IXAudio20Voice, pSendList:ptr XAUDIO23_VOICE_SENDS): HRESULT {.stdcall.}
         SetEffectChain*: proc (This:ptr IXAudio20Voice, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN): HRESULT {.stdcall.}
-        EnableEffect*: proc (This:ptr IXAudio20Voice, EffectIndex:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
-        DisableEffect*: proc (This:ptr IXAudio20Voice, EffectIndex:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
+        EnableEffect*: proc (This:ptr IXAudio20Voice, EffectIndex:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
+        DisableEffect*: proc (This:ptr IXAudio20Voice, EffectIndex:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetEffectState*: proc (This:ptr IXAudio20Voice, EffectIndex:UINT32, pEnabled:ptr BOOL) {.stdcall.}
-        SetEffectParameters*: proc (This:ptr IXAudio20Voice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetEffectParameters*: proc (This:ptr IXAudio20Voice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetEffectParameters*: proc (This:ptr IXAudio20Voice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32): HRESULT {.stdcall.}
-        SetFilterParameters*: proc (This:ptr IXAudio20Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetFilterParameters*: proc (This:ptr IXAudio20Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetFilterParameters*: proc (This:ptr IXAudio20Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS) {.stdcall.}
-        SetVolume*: proc (This:ptr IXAudio20Voice, Volume:float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetVolume*: proc (This:ptr IXAudio20Voice, Volume:cfloat, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetVolume*: proc (This:ptr IXAudio20Voice, pVolume:ptr float) {.stdcall.}
-        SetChannelVolumes*: proc (This:ptr IXAudio20Voice, Channels:UINT32, pVolumes:ptr float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetChannelVolumes*: proc (This:ptr IXAudio20Voice, Channels:UINT32, pVolumes:ptr float, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetChannelVolumes*: proc (This:ptr IXAudio20Voice, Channels:UINT32, pVolumes:ptr float) {.stdcall.}
-        SetOutputMatrix*: proc (This:ptr IXAudio20Voice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetOutputMatrix*: proc (This:ptr IXAudio20Voice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetOutputMatrix*: proc (This:ptr IXAudio20Voice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float): HRESULT {.stdcall.}
         DestroyVoice*: proc (This:ptr IXAudio20Voice) {.stdcall.}
     IXAudio20Voice* = object
@@ -253,18 +256,18 @@ type
         GetVoiceDetails*: proc (This:ptr IXAudio23Voice, pVoiceDetails:ptr XAUDIO27_VOICE_DETAILS) {.stdcall.}
         SetOutputVoices*: proc (This:ptr IXAudio23Voice, pSendList:ptr XAUDIO23_VOICE_SENDS): HRESULT {.stdcall.}
         SetEffectChain*: proc (This:ptr IXAudio23Voice, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN): HRESULT {.stdcall.}
-        EnableEffect*: proc (This:ptr IXAudio23Voice, EffectIndex:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
-        DisableEffect*: proc (This:ptr IXAudio23Voice, EffectIndex:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
+        EnableEffect*: proc (This:ptr IXAudio23Voice, EffectIndex:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
+        DisableEffect*: proc (This:ptr IXAudio23Voice, EffectIndex:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetEffectState*: proc (This:ptr IXAudio23Voice, EffectIndex:UINT32, pEnabled:ptr BOOL) {.stdcall.}
-        SetEffectParameters*: proc (This:ptr IXAudio23Voice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetEffectParameters*: proc (This:ptr IXAudio23Voice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetEffectParameters*: proc (This:ptr IXAudio23Voice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32): HRESULT {.stdcall.}
-        SetFilterParameters*: proc (This:ptr IXAudio23Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetFilterParameters*: proc (This:ptr IXAudio23Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetFilterParameters*: proc (This:ptr IXAudio23Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS) {.stdcall.}
-        SetVolume*: proc (This:ptr IXAudio23Voice, Volume:float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetVolume*: proc (This:ptr IXAudio23Voice, Volume:cfloat, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetVolume*: proc (This:ptr IXAudio23Voice, pVolume:ptr float) {.stdcall.}
-        SetChannelVolumes*: proc (This:ptr IXAudio23Voice, Channels:UINT32, pVolumes:ptr float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetChannelVolumes*: proc (This:ptr IXAudio23Voice, Channels:UINT32, pVolumes:ptr float, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetChannelVolumes*: proc (This:ptr IXAudio23Voice, Channels:UINT32, pVolumes:ptr float) {.stdcall.}
-        SetOutputMatrix*: proc (This:ptr IXAudio23Voice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetOutputMatrix*: proc (This:ptr IXAudio23Voice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetOutputMatrix*: proc (This:ptr IXAudio23Voice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float) {.stdcall.}
         DestroyVoice*: proc (This:ptr IXAudio23Voice) {.stdcall.}
     IXAudio23Voice* = object
@@ -273,20 +276,20 @@ type
         GetVoiceDetails*: proc (This:ptr IXAudio27Voice, pVoiceDetails:ptr XAUDIO27_VOICE_DETAILS) {.stdcall.}
         SetOutputVoices*: proc (This:ptr IXAudio27Voice, pSendList:ptr XAUDIO2_VOICE_SENDS): HRESULT {.stdcall.}
         SetEffectChain*: proc (This:ptr IXAudio27Voice, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN): HRESULT {.stdcall.}
-        EnableEffect*: proc (This:ptr IXAudio27Voice, EffectIndex:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
-        DisableEffect*: proc (This:ptr IXAudio27Voice, EffectIndex:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
+        EnableEffect*: proc (This:ptr IXAudio27Voice, EffectIndex:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
+        DisableEffect*: proc (This:ptr IXAudio27Voice, EffectIndex:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetEffectState*: proc (This:ptr IXAudio27Voice, EffectIndex:UINT32, pEnabled:ptr BOOL) {.stdcall.}
-        SetEffectParameters*: proc (This:ptr IXAudio27Voice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetEffectParameters*: proc (This:ptr IXAudio27Voice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetEffectParameters*: proc (This:ptr IXAudio27Voice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32): HRESULT {.stdcall.}
-        SetFilterParameters*: proc (This:ptr IXAudio27Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetFilterParameters*: proc (This:ptr IXAudio27Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetFilterParameters*: proc (This:ptr IXAudio27Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS) {.stdcall.}
-        SetOutputFilterParameters*: proc (This:ptr IXAudio27Voice, pDestinationVoice:ptr IXAudio2Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetOutputFilterParameters*: proc (This:ptr IXAudio27Voice, pDestinationVoice:ptr IXAudio2Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetOutputFilterParameters*: proc (This:ptr IXAudio27Voice, pDestinationVoice:ptr IXAudio2Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS) {.stdcall.}
-        SetVolume*: proc (This:ptr IXAudio27Voice, Volume:float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetVolume*: proc (This:ptr IXAudio27Voice, Volume:cfloat, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetVolume*: proc (This:ptr IXAudio27Voice, pVolume:ptr float) {.stdcall.}
-        SetChannelVolumes*: proc (This:ptr IXAudio27Voice, Channels:UINT32, pVolumes:ptr float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetChannelVolumes*: proc (This:ptr IXAudio27Voice, Channels:UINT32, pVolumes:ptr float, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetChannelVolumes*: proc (This:ptr IXAudio27Voice, Channels:UINT32, pVolumes:ptr float) {.stdcall.}
-        SetOutputMatrix*: proc (This:ptr IXAudio27Voice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetOutputMatrix*: proc (This:ptr IXAudio27Voice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetOutputMatrix*: proc (This:ptr IXAudio27Voice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float) {.stdcall.}
         DestroyVoice*: proc (This:ptr IXAudio27Voice) {.stdcall.}
     IXAudio27Voice* = object
@@ -295,20 +298,20 @@ type
         GetVoiceDetails*: proc (This:ptr IXAudio2Voice, pVoiceDetails:ptr XAUDIO2_VOICE_DETAILS) {.stdcall.}
         SetOutputVoices*: proc (This:ptr IXAudio2Voice, pSendList:ptr XAUDIO2_VOICE_SENDS): HRESULT {.stdcall.}
         SetEffectChain*: proc (This:ptr IXAudio2Voice, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN): HRESULT {.stdcall.}
-        EnableEffect*: proc (This:ptr IXAudio2Voice, EffectIndex:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
-        DisableEffect*: proc (This:ptr IXAudio2Voice, EffectIndex:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
+        EnableEffect*: proc (This:ptr IXAudio2Voice, EffectIndex:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
+        DisableEffect*: proc (This:ptr IXAudio2Voice, EffectIndex:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetEffectState*: proc (This:ptr IXAudio2Voice, EffectIndex:UINT32, pEnabled:ptr BOOL) {.stdcall.}
-        SetEffectParameters*: proc (This:ptr IXAudio2Voice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetEffectParameters*: proc (This:ptr IXAudio2Voice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetEffectParameters*: proc (This:ptr IXAudio2Voice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32): HRESULT {.stdcall.}
-        SetFilterParameters*: proc (This:ptr IXAudio2Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetFilterParameters*: proc (This:ptr IXAudio2Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetFilterParameters*: proc (This:ptr IXAudio2Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS) {.stdcall.}
-        SetOutputFilterParameters*: proc (This:ptr IXAudio2Voice, pDestinationVoice:ptr IXAudio2Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetOutputFilterParameters*: proc (This:ptr IXAudio2Voice, pDestinationVoice:ptr IXAudio2Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetOutputFilterParameters*: proc (This:ptr IXAudio2Voice, pDestinationVoice:ptr IXAudio2Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS) {.stdcall.}
-        SetVolume*: proc (This:ptr IXAudio2Voice, Volume:float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetVolume*: proc (This:ptr IXAudio2Voice, Volume:cfloat, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetVolume*: proc (This:ptr IXAudio2Voice, pVolume:ptr float) {.stdcall.}
-        SetChannelVolumes*: proc (This:ptr IXAudio2Voice, Channels:UINT32, pVolumes:ptr float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetChannelVolumes*: proc (This:ptr IXAudio2Voice, Channels:UINT32, pVolumes:ptr float, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetChannelVolumes*: proc (This:ptr IXAudio2Voice, Channels:UINT32, pVolumes:ptr float) {.stdcall.}
-        SetOutputMatrix*: proc (This:ptr IXAudio2Voice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetOutputMatrix*: proc (This:ptr IXAudio2Voice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetOutputMatrix*: proc (This:ptr IXAudio2Voice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float) {.stdcall.}
         DestroyVoice*: proc (This:ptr IXAudio2Voice) {.stdcall.}
     IXAudio2Voice* = object
@@ -317,28 +320,28 @@ type
         GetVoiceDetails*: proc (This:ptr IXAudio20SourceVoice, pVoiceDetails:ptr XAUDIO27_VOICE_DETAILS) {.stdcall.}
         SetOutputVoices*: proc (This:ptr IXAudio20SourceVoice, pSendList:ptr XAUDIO23_VOICE_SENDS): HRESULT {.stdcall.}
         SetEffectChain*: proc (This:ptr IXAudio20SourceVoice, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN): HRESULT {.stdcall.}
-        EnableEffect*: proc (This:ptr IXAudio20SourceVoice, EffectIndex:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
-        DisableEffect*: proc (This:ptr IXAudio20SourceVoice, EffectIndex:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
+        EnableEffect*: proc (This:ptr IXAudio20SourceVoice, EffectIndex:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
+        DisableEffect*: proc (This:ptr IXAudio20SourceVoice, EffectIndex:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetEffectState*: proc (This:ptr IXAudio20SourceVoice, EffectIndex:UINT32, pEnabled:ptr BOOL) {.stdcall.}
-        SetEffectParameters*: proc (This:ptr IXAudio20SourceVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetEffectParameters*: proc (This:ptr IXAudio20SourceVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetEffectParameters*: proc (This:ptr IXAudio20SourceVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32): HRESULT {.stdcall.}
-        SetFilterParameters*: proc (This:ptr IXAudio20SourceVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetFilterParameters*: proc (This:ptr IXAudio20SourceVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetFilterParameters*: proc (This:ptr IXAudio20SourceVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS) {.stdcall.}
-        SetVolume*: proc (This:ptr IXAudio20SourceVoice, Volume:float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetVolume*: proc (This:ptr IXAudio20SourceVoice, Volume:cfloat, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetVolume*: proc (This:ptr IXAudio20SourceVoice, pVolume:ptr float) {.stdcall.}
-        SetChannelVolumes*: proc (This:ptr IXAudio20SourceVoice, Channels:UINT32, pVolumes:ptr float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetChannelVolumes*: proc (This:ptr IXAudio20SourceVoice, Channels:UINT32, pVolumes:ptr float, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetChannelVolumes*: proc (This:ptr IXAudio20SourceVoice, Channels:UINT32, pVolumes:ptr float) {.stdcall.}
-        SetOutputMatrix*: proc (This:ptr IXAudio20SourceVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetOutputMatrix*: proc (This:ptr IXAudio20SourceVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetOutputMatrix*: proc (This:ptr IXAudio20SourceVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float): HRESULT {.stdcall.}
         DestroyVoice*: proc (This:ptr IXAudio20SourceVoice) {.stdcall.}
-        Start*: proc (This:ptr IXAudio20SourceVoice, Flags:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
-        Stop*: proc (This:ptr IXAudio20SourceVoice, Flags:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
-        SubmitSourceBuffer*: proc (This:ptr IXAudio20SourceVoice, pBuffer:ptr XAUDIO2_BUFFER, pBufferWMA:ptr XAUDIO2_BUFFER_WMA): HRESULT {.stdcall.}
+        Start*: proc (This:ptr IXAudio20SourceVoice, Flags:UINT32=0, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
+        Stop*: proc (This:ptr IXAudio20SourceVoice, Flags:UINT32=0, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
+        SubmitSourceBuffer*: proc (This:ptr IXAudio20SourceVoice, pBuffer:ptr XAUDIO2_BUFFER, pBufferWMA:ptr XAUDIO2_BUFFER_WMA=nil): HRESULT {.stdcall.}
         FlushSourceBuffers*: proc (This:ptr IXAudio20SourceVoice): HRESULT {.stdcall.}
         Discontinuity*: proc (This:ptr IXAudio20SourceVoice): HRESULT {.stdcall.}
-        ExitLoop*: proc (This:ptr IXAudio20SourceVoice, OperationSet:UINT32): HRESULT {.stdcall.}
+        ExitLoop*: proc (This:ptr IXAudio20SourceVoice, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetState*: proc (This:ptr IXAudio20SourceVoice, pVoiceState:ptr XAUDIO2_VOICE_STATE) {.stdcall.}
-        SetFrequencyRatio*: proc (This:ptr IXAudio20SourceVoice, Ratio:float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetFrequencyRatio*: proc (This:ptr IXAudio20SourceVoice, Ratio:cfloat, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetFrequencyRatio*: proc (This:ptr IXAudio20SourceVoice, pRatio:ptr float) {.stdcall.}
     IXAudio20SourceVoice* = object
         lpVtbl*: ptr IXAudio20SourceVoiceVtbl
@@ -346,28 +349,28 @@ type
         GetVoiceDetails*: proc (This:ptr IXAudio23SourceVoice, pVoiceDetails:ptr XAUDIO27_VOICE_DETAILS) {.stdcall.}
         SetOutputVoices*: proc (This:ptr IXAudio23SourceVoice, pSendList:ptr XAUDIO23_VOICE_SENDS): HRESULT {.stdcall.}
         SetEffectChain*: proc (This:ptr IXAudio23SourceVoice, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN): HRESULT {.stdcall.}
-        EnableEffect*: proc (This:ptr IXAudio23SourceVoice, EffectIndex:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
-        DisableEffect*: proc (This:ptr IXAudio23SourceVoice, EffectIndex:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
+        EnableEffect*: proc (This:ptr IXAudio23SourceVoice, EffectIndex:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
+        DisableEffect*: proc (This:ptr IXAudio23SourceVoice, EffectIndex:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetEffectState*: proc (This:ptr IXAudio23SourceVoice, EffectIndex:UINT32, pEnabled:ptr BOOL) {.stdcall.}
-        SetEffectParameters*: proc (This:ptr IXAudio23SourceVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetEffectParameters*: proc (This:ptr IXAudio23SourceVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetEffectParameters*: proc (This:ptr IXAudio23SourceVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32): HRESULT {.stdcall.}
-        SetFilterParameters*: proc (This:ptr IXAudio23SourceVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetFilterParameters*: proc (This:ptr IXAudio23SourceVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetFilterParameters*: proc (This:ptr IXAudio23SourceVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS) {.stdcall.}
-        SetVolume*: proc (This:ptr IXAudio23SourceVoice, Volume:float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetVolume*: proc (This:ptr IXAudio23SourceVoice, Volume:cfloat, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetVolume*: proc (This:ptr IXAudio23SourceVoice, pVolume:ptr float) {.stdcall.}
-        SetChannelVolumes*: proc (This:ptr IXAudio23SourceVoice, Channels:UINT32, pVolumes:ptr float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetChannelVolumes*: proc (This:ptr IXAudio23SourceVoice, Channels:UINT32, pVolumes:ptr float, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetChannelVolumes*: proc (This:ptr IXAudio23SourceVoice, Channels:UINT32, pVolumes:ptr float) {.stdcall.}
-        SetOutputMatrix*: proc (This:ptr IXAudio23SourceVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetOutputMatrix*: proc (This:ptr IXAudio23SourceVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetOutputMatrix*: proc (This:ptr IXAudio23SourceVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float) {.stdcall.}
         DestroyVoice*: proc (This:ptr IXAudio23SourceVoice) {.stdcall.}
-        Start*: proc (This:ptr IXAudio23SourceVoice, Flags:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
-        Stop*: proc (This:ptr IXAudio23SourceVoice, Flags:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
-        SubmitSourceBuffer*: proc (This:ptr IXAudio23SourceVoice, pBuffer:ptr XAUDIO2_BUFFER, pBufferWMA:ptr XAUDIO2_BUFFER_WMA): HRESULT {.stdcall.}
+        Start*: proc (This:ptr IXAudio23SourceVoice, Flags:UINT32=0, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
+        Stop*: proc (This:ptr IXAudio23SourceVoice, Flags:UINT32=0, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
+        SubmitSourceBuffer*: proc (This:ptr IXAudio23SourceVoice, pBuffer:ptr XAUDIO2_BUFFER, pBufferWMA:ptr XAUDIO2_BUFFER_WMA=nil): HRESULT {.stdcall.}
         FlushSourceBuffers*: proc (This:ptr IXAudio23SourceVoice): HRESULT {.stdcall.}
         Discontinuity*: proc (This:ptr IXAudio23SourceVoice): HRESULT {.stdcall.}
-        ExitLoop*: proc (This:ptr IXAudio23SourceVoice, OperationSet:UINT32): HRESULT {.stdcall.}
+        ExitLoop*: proc (This:ptr IXAudio23SourceVoice, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetState*: proc (This:ptr IXAudio23SourceVoice, pVoiceState:ptr XAUDIO2_VOICE_STATE) {.stdcall.}
-        SetFrequencyRatio*: proc (This:ptr IXAudio23SourceVoice, Ratio:float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetFrequencyRatio*: proc (This:ptr IXAudio23SourceVoice, Ratio:cfloat, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetFrequencyRatio*: proc (This:ptr IXAudio23SourceVoice, pRatio:ptr float) {.stdcall.}
     IXAudio23SourceVoice* = object
         lpVtbl*: ptr IXAudio23SourceVoiceVtbl
@@ -375,30 +378,30 @@ type
         GetVoiceDetails*: proc (This:ptr IXAudio27SourceVoice, pVoiceDetails:ptr XAUDIO27_VOICE_DETAILS) {.stdcall.}
         SetOutputVoices*: proc (This:ptr IXAudio27SourceVoice, pSendList:ptr XAUDIO2_VOICE_SENDS): HRESULT {.stdcall.}
         SetEffectChain*: proc (This:ptr IXAudio27SourceVoice, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN): HRESULT {.stdcall.}
-        EnableEffect*: proc (This:ptr IXAudio27SourceVoice, EffectIndex:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
-        DisableEffect*: proc (This:ptr IXAudio27SourceVoice, EffectIndex:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
+        EnableEffect*: proc (This:ptr IXAudio27SourceVoice, EffectIndex:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
+        DisableEffect*: proc (This:ptr IXAudio27SourceVoice, EffectIndex:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetEffectState*: proc (This:ptr IXAudio27SourceVoice, EffectIndex:UINT32, pEnabled:ptr BOOL) {.stdcall.}
-        SetEffectParameters*: proc (This:ptr IXAudio27SourceVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetEffectParameters*: proc (This:ptr IXAudio27SourceVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetEffectParameters*: proc (This:ptr IXAudio27SourceVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32): HRESULT {.stdcall.}
-        SetFilterParameters*: proc (This:ptr IXAudio27SourceVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetFilterParameters*: proc (This:ptr IXAudio27SourceVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetFilterParameters*: proc (This:ptr IXAudio27SourceVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS) {.stdcall.}
-        SetOutputFilterParameters*: proc (This:ptr IXAudio27SourceVoice, pDestinationVoice:ptr IXAudio2Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetOutputFilterParameters*: proc (This:ptr IXAudio27SourceVoice, pDestinationVoice:ptr IXAudio2Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetOutputFilterParameters*: proc (This:ptr IXAudio27SourceVoice, pDestinationVoice:ptr IXAudio2Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS) {.stdcall.}
-        SetVolume*: proc (This:ptr IXAudio27SourceVoice, Volume:float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetVolume*: proc (This:ptr IXAudio27SourceVoice, Volume:cfloat, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetVolume*: proc (This:ptr IXAudio27SourceVoice, pVolume:ptr float) {.stdcall.}
-        SetChannelVolumes*: proc (This:ptr IXAudio27SourceVoice, Channels:UINT32, pVolumes:ptr float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetChannelVolumes*: proc (This:ptr IXAudio27SourceVoice, Channels:UINT32, pVolumes:ptr float, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetChannelVolumes*: proc (This:ptr IXAudio27SourceVoice, Channels:UINT32, pVolumes:ptr float) {.stdcall.}
-        SetOutputMatrix*: proc (This:ptr IXAudio27SourceVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetOutputMatrix*: proc (This:ptr IXAudio27SourceVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetOutputMatrix*: proc (This:ptr IXAudio27SourceVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float) {.stdcall.}
         DestroyVoice*: proc (This:ptr IXAudio27SourceVoice) {.stdcall.}
-        Start*: proc (This:ptr IXAudio27SourceVoice, Flags:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
-        Stop*: proc (This:ptr IXAudio27SourceVoice, Flags:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
-        SubmitSourceBuffer*: proc (This:ptr IXAudio27SourceVoice, pBuffer:ptr XAUDIO2_BUFFER, pBufferWMA:ptr XAUDIO2_BUFFER_WMA): HRESULT {.stdcall.}
+        Start*: proc (This:ptr IXAudio27SourceVoice, Flags:UINT32=0, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
+        Stop*: proc (This:ptr IXAudio27SourceVoice, Flags:UINT32=0, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
+        SubmitSourceBuffer*: proc (This:ptr IXAudio27SourceVoice, pBuffer:ptr XAUDIO2_BUFFER, pBufferWMA:ptr XAUDIO2_BUFFER_WMA=nil): HRESULT {.stdcall.}
         FlushSourceBuffers*: proc (This:ptr IXAudio27SourceVoice): HRESULT {.stdcall.}
         Discontinuity*: proc (This:ptr IXAudio27SourceVoice): HRESULT {.stdcall.}
-        ExitLoop*: proc (This:ptr IXAudio27SourceVoice, OperationSet:UINT32): HRESULT {.stdcall.}
+        ExitLoop*: proc (This:ptr IXAudio27SourceVoice, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetState*: proc (This:ptr IXAudio27SourceVoice, pVoiceState:ptr XAUDIO2_VOICE_STATE) {.stdcall.}
-        SetFrequencyRatio*: proc (This:ptr IXAudio27SourceVoice, Ratio:float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetFrequencyRatio*: proc (This:ptr IXAudio27SourceVoice, Ratio:cfloat, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetFrequencyRatio*: proc (This:ptr IXAudio27SourceVoice, pRatio:ptr float) {.stdcall.}
         SetSourceSampleRate*: proc (This:ptr IXAudio27SourceVoice, NewSourceSampleRate:UINT32): HRESULT {.stdcall.}
     IXAudio27SourceVoice* = object
@@ -407,30 +410,30 @@ type
         GetVoiceDetails*: proc (This:ptr IXAudio2SourceVoice, pVoiceDetails:ptr XAUDIO2_VOICE_DETAILS) {.stdcall.}
         SetOutputVoices*: proc (This:ptr IXAudio2SourceVoice, pSendList:ptr XAUDIO2_VOICE_SENDS): HRESULT {.stdcall.}
         SetEffectChain*: proc (This:ptr IXAudio2SourceVoice, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN): HRESULT {.stdcall.}
-        EnableEffect*: proc (This:ptr IXAudio2SourceVoice, EffectIndex:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
-        DisableEffect*: proc (This:ptr IXAudio2SourceVoice, EffectIndex:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
+        EnableEffect*: proc (This:ptr IXAudio2SourceVoice, EffectIndex:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
+        DisableEffect*: proc (This:ptr IXAudio2SourceVoice, EffectIndex:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetEffectState*: proc (This:ptr IXAudio2SourceVoice, EffectIndex:UINT32, pEnabled:ptr BOOL) {.stdcall.}
-        SetEffectParameters*: proc (This:ptr IXAudio2SourceVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetEffectParameters*: proc (This:ptr IXAudio2SourceVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetEffectParameters*: proc (This:ptr IXAudio2SourceVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32): HRESULT {.stdcall.}
-        SetFilterParameters*: proc (This:ptr IXAudio2SourceVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetFilterParameters*: proc (This:ptr IXAudio2SourceVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetFilterParameters*: proc (This:ptr IXAudio2SourceVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS) {.stdcall.}
-        SetOutputFilterParameters*: proc (This:ptr IXAudio2SourceVoice, pDestinationVoice:ptr IXAudio2Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetOutputFilterParameters*: proc (This:ptr IXAudio2SourceVoice, pDestinationVoice:ptr IXAudio2Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetOutputFilterParameters*: proc (This:ptr IXAudio2SourceVoice, pDestinationVoice:ptr IXAudio2Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS) {.stdcall.}
-        SetVolume*: proc (This:ptr IXAudio2SourceVoice, Volume:float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetVolume*: proc (This:ptr IXAudio2SourceVoice, Volume:cfloat, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetVolume*: proc (This:ptr IXAudio2SourceVoice, pVolume:ptr float) {.stdcall.}
-        SetChannelVolumes*: proc (This:ptr IXAudio2SourceVoice, Channels:UINT32, pVolumes:ptr float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetChannelVolumes*: proc (This:ptr IXAudio2SourceVoice, Channels:UINT32, pVolumes:ptr float, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetChannelVolumes*: proc (This:ptr IXAudio2SourceVoice, Channels:UINT32, pVolumes:ptr float) {.stdcall.}
-        SetOutputMatrix*: proc (This:ptr IXAudio2SourceVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetOutputMatrix*: proc (This:ptr IXAudio2SourceVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetOutputMatrix*: proc (This:ptr IXAudio2SourceVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float) {.stdcall.}
         DestroyVoice*: proc (This:ptr IXAudio2SourceVoice) {.stdcall.}
-        Start*: proc (This:ptr IXAudio2SourceVoice, Flags:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
-        Stop*: proc (This:ptr IXAudio2SourceVoice, Flags:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
-        SubmitSourceBuffer*: proc (This:ptr IXAudio2SourceVoice, pBuffer:ptr XAUDIO2_BUFFER, pBufferWMA:ptr XAUDIO2_BUFFER_WMA): HRESULT {.stdcall.}
+        Start*: proc (This:ptr IXAudio2SourceVoice, Flags:UINT32=0, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
+        Stop*: proc (This:ptr IXAudio2SourceVoice, Flags:UINT32=0, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
+        SubmitSourceBuffer*: proc (This:ptr IXAudio2SourceVoice, pBuffer:ptr XAUDIO2_BUFFER, pBufferWMA:ptr XAUDIO2_BUFFER_WMA=nil): HRESULT {.stdcall.}
         FlushSourceBuffers*: proc (This:ptr IXAudio2SourceVoice): HRESULT {.stdcall.}
         Discontinuity*: proc (This:ptr IXAudio2SourceVoice): HRESULT {.stdcall.}
-        ExitLoop*: proc (This:ptr IXAudio2SourceVoice, OperationSet:UINT32): HRESULT {.stdcall.}
+        ExitLoop*: proc (This:ptr IXAudio2SourceVoice, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetState*: proc (This:ptr IXAudio2SourceVoice, pVoiceState:ptr XAUDIO2_VOICE_STATE, Flags:UINT32) {.stdcall.}
-        SetFrequencyRatio*: proc (This:ptr IXAudio2SourceVoice, Ratio:float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetFrequencyRatio*: proc (This:ptr IXAudio2SourceVoice, Ratio:cfloat, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetFrequencyRatio*: proc (This:ptr IXAudio2SourceVoice, pRatio:ptr float) {.stdcall.}
         SetSourceSampleRate*: proc (This:ptr IXAudio2SourceVoice, NewSourceSampleRate:UINT32): HRESULT {.stdcall.}
     IXAudio2SourceVoice* = object
@@ -439,18 +442,18 @@ type
         GetVoiceDetails*: proc (This:ptr IXAudio20SubmixVoice, pVoiceDetails:ptr XAUDIO27_VOICE_DETAILS) {.stdcall.}
         SetOutputVoices*: proc (This:ptr IXAudio20SubmixVoice, pSendList:ptr XAUDIO23_VOICE_SENDS): HRESULT {.stdcall.}
         SetEffectChain*: proc (This:ptr IXAudio20SubmixVoice, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN): HRESULT {.stdcall.}
-        EnableEffect*: proc (This:ptr IXAudio20SubmixVoice, EffectIndex:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
-        DisableEffect*: proc (This:ptr IXAudio20SubmixVoice, EffectIndex:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
+        EnableEffect*: proc (This:ptr IXAudio20SubmixVoice, EffectIndex:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
+        DisableEffect*: proc (This:ptr IXAudio20SubmixVoice, EffectIndex:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetEffectState*: proc (This:ptr IXAudio20SubmixVoice, EffectIndex:UINT32, pEnabled:ptr BOOL) {.stdcall.}
-        SetEffectParameters*: proc (This:ptr IXAudio20SubmixVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetEffectParameters*: proc (This:ptr IXAudio20SubmixVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetEffectParameters*: proc (This:ptr IXAudio20SubmixVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32): HRESULT {.stdcall.}
-        SetFilterParameters*: proc (This:ptr IXAudio20SubmixVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetFilterParameters*: proc (This:ptr IXAudio20SubmixVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetFilterParameters*: proc (This:ptr IXAudio20SubmixVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS) {.stdcall.}
-        SetVolume*: proc (This:ptr IXAudio20SubmixVoice, Volume:float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetVolume*: proc (This:ptr IXAudio20SubmixVoice, Volume:cfloat, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetVolume*: proc (This:ptr IXAudio20SubmixVoice, pVolume:ptr float) {.stdcall.}
-        SetChannelVolumes*: proc (This:ptr IXAudio20SubmixVoice, Channels:UINT32, pVolumes:ptr float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetChannelVolumes*: proc (This:ptr IXAudio20SubmixVoice, Channels:UINT32, pVolumes:ptr float, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetChannelVolumes*: proc (This:ptr IXAudio20SubmixVoice, Channels:UINT32, pVolumes:ptr float) {.stdcall.}
-        SetOutputMatrix*: proc (This:ptr IXAudio20SubmixVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetOutputMatrix*: proc (This:ptr IXAudio20SubmixVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetOutputMatrix*: proc (This:ptr IXAudio20SubmixVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float): HRESULT {.stdcall.}
         DestroyVoice*: proc (This:ptr IXAudio20SubmixVoice) {.stdcall.}
     IXAudio20SubmixVoice* = object
@@ -459,18 +462,18 @@ type
         GetVoiceDetails*: proc (This:ptr IXAudio23SubmixVoice, pVoiceDetails:ptr XAUDIO27_VOICE_DETAILS) {.stdcall.}
         SetOutputVoices*: proc (This:ptr IXAudio23SubmixVoice, pSendList:ptr XAUDIO23_VOICE_SENDS): HRESULT {.stdcall.}
         SetEffectChain*: proc (This:ptr IXAudio23SubmixVoice, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN): HRESULT {.stdcall.}
-        EnableEffect*: proc (This:ptr IXAudio23SubmixVoice, EffectIndex:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
-        DisableEffect*: proc (This:ptr IXAudio23SubmixVoice, EffectIndex:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
+        EnableEffect*: proc (This:ptr IXAudio23SubmixVoice, EffectIndex:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
+        DisableEffect*: proc (This:ptr IXAudio23SubmixVoice, EffectIndex:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetEffectState*: proc (This:ptr IXAudio23SubmixVoice, EffectIndex:UINT32, pEnabled:ptr BOOL) {.stdcall.}
-        SetEffectParameters*: proc (This:ptr IXAudio23SubmixVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetEffectParameters*: proc (This:ptr IXAudio23SubmixVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetEffectParameters*: proc (This:ptr IXAudio23SubmixVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32): HRESULT {.stdcall.}
-        SetFilterParameters*: proc (This:ptr IXAudio23SubmixVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetFilterParameters*: proc (This:ptr IXAudio23SubmixVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetFilterParameters*: proc (This:ptr IXAudio23SubmixVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS) {.stdcall.}
-        SetVolume*: proc (This:ptr IXAudio23SubmixVoice, Volume:float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetVolume*: proc (This:ptr IXAudio23SubmixVoice, Volume:cfloat, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetVolume*: proc (This:ptr IXAudio23SubmixVoice, pVolume:ptr float) {.stdcall.}
-        SetChannelVolumes*: proc (This:ptr IXAudio23SubmixVoice, Channels:UINT32, pVolumes:ptr float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetChannelVolumes*: proc (This:ptr IXAudio23SubmixVoice, Channels:UINT32, pVolumes:ptr float, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetChannelVolumes*: proc (This:ptr IXAudio23SubmixVoice, Channels:UINT32, pVolumes:ptr float) {.stdcall.}
-        SetOutputMatrix*: proc (This:ptr IXAudio23SubmixVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetOutputMatrix*: proc (This:ptr IXAudio23SubmixVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetOutputMatrix*: proc (This:ptr IXAudio23SubmixVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float) {.stdcall.}
         DestroyVoice*: proc (This:ptr IXAudio23SubmixVoice) {.stdcall.}
     IXAudio23SubmixVoice* = object
@@ -479,20 +482,20 @@ type
         GetVoiceDetails*: proc (This:ptr IXAudio27SubmixVoice, pVoiceDetails:ptr XAUDIO27_VOICE_DETAILS) {.stdcall.}
         SetOutputVoices*: proc (This:ptr IXAudio27SubmixVoice, pSendList:ptr XAUDIO2_VOICE_SENDS): HRESULT {.stdcall.}
         SetEffectChain*: proc (This:ptr IXAudio27SubmixVoice, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN): HRESULT {.stdcall.}
-        EnableEffect*: proc (This:ptr IXAudio27SubmixVoice, EffectIndex:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
-        DisableEffect*: proc (This:ptr IXAudio27SubmixVoice, EffectIndex:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
+        EnableEffect*: proc (This:ptr IXAudio27SubmixVoice, EffectIndex:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
+        DisableEffect*: proc (This:ptr IXAudio27SubmixVoice, EffectIndex:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetEffectState*: proc (This:ptr IXAudio27SubmixVoice, EffectIndex:UINT32, pEnabled:ptr BOOL) {.stdcall.}
-        SetEffectParameters*: proc (This:ptr IXAudio27SubmixVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetEffectParameters*: proc (This:ptr IXAudio27SubmixVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetEffectParameters*: proc (This:ptr IXAudio27SubmixVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32): HRESULT {.stdcall.}
-        SetFilterParameters*: proc (This:ptr IXAudio27SubmixVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetFilterParameters*: proc (This:ptr IXAudio27SubmixVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetFilterParameters*: proc (This:ptr IXAudio27SubmixVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS) {.stdcall.}
-        SetOutputFilterParameters*: proc (This:ptr IXAudio27SubmixVoice, pDestinationVoice:ptr IXAudio2Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetOutputFilterParameters*: proc (This:ptr IXAudio27SubmixVoice, pDestinationVoice:ptr IXAudio2Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetOutputFilterParameters*: proc (This:ptr IXAudio27SubmixVoice, pDestinationVoice:ptr IXAudio2Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS) {.stdcall.}
-        SetVolume*: proc (This:ptr IXAudio27SubmixVoice, Volume:float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetVolume*: proc (This:ptr IXAudio27SubmixVoice, Volume:cfloat, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetVolume*: proc (This:ptr IXAudio27SubmixVoice, pVolume:ptr float) {.stdcall.}
-        SetChannelVolumes*: proc (This:ptr IXAudio27SubmixVoice, Channels:UINT32, pVolumes:ptr float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetChannelVolumes*: proc (This:ptr IXAudio27SubmixVoice, Channels:UINT32, pVolumes:ptr float, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetChannelVolumes*: proc (This:ptr IXAudio27SubmixVoice, Channels:UINT32, pVolumes:ptr float) {.stdcall.}
-        SetOutputMatrix*: proc (This:ptr IXAudio27SubmixVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetOutputMatrix*: proc (This:ptr IXAudio27SubmixVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetOutputMatrix*: proc (This:ptr IXAudio27SubmixVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float) {.stdcall.}
         DestroyVoice*: proc (This:ptr IXAudio27SubmixVoice) {.stdcall.}
     IXAudio27SubmixVoice* = object
@@ -501,20 +504,20 @@ type
         GetVoiceDetails*: proc (This:ptr IXAudio2SubmixVoice, pVoiceDetails:ptr XAUDIO2_VOICE_DETAILS) {.stdcall.}
         SetOutputVoices*: proc (This:ptr IXAudio2SubmixVoice, pSendList:ptr XAUDIO2_VOICE_SENDS): HRESULT {.stdcall.}
         SetEffectChain*: proc (This:ptr IXAudio2SubmixVoice, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN): HRESULT {.stdcall.}
-        EnableEffect*: proc (This:ptr IXAudio2SubmixVoice, EffectIndex:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
-        DisableEffect*: proc (This:ptr IXAudio2SubmixVoice, EffectIndex:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
+        EnableEffect*: proc (This:ptr IXAudio2SubmixVoice, EffectIndex:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
+        DisableEffect*: proc (This:ptr IXAudio2SubmixVoice, EffectIndex:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetEffectState*: proc (This:ptr IXAudio2SubmixVoice, EffectIndex:UINT32, pEnabled:ptr BOOL) {.stdcall.}
-        SetEffectParameters*: proc (This:ptr IXAudio2SubmixVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetEffectParameters*: proc (This:ptr IXAudio2SubmixVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetEffectParameters*: proc (This:ptr IXAudio2SubmixVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32): HRESULT {.stdcall.}
-        SetFilterParameters*: proc (This:ptr IXAudio2SubmixVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetFilterParameters*: proc (This:ptr IXAudio2SubmixVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetFilterParameters*: proc (This:ptr IXAudio2SubmixVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS) {.stdcall.}
-        SetOutputFilterParameters*: proc (This:ptr IXAudio2SubmixVoice, pDestinationVoice:ptr IXAudio2Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetOutputFilterParameters*: proc (This:ptr IXAudio2SubmixVoice, pDestinationVoice:ptr IXAudio2Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetOutputFilterParameters*: proc (This:ptr IXAudio2SubmixVoice, pDestinationVoice:ptr IXAudio2Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS) {.stdcall.}
-        SetVolume*: proc (This:ptr IXAudio2SubmixVoice, Volume:float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetVolume*: proc (This:ptr IXAudio2SubmixVoice, Volume:cfloat, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetVolume*: proc (This:ptr IXAudio2SubmixVoice, pVolume:ptr float) {.stdcall.}
-        SetChannelVolumes*: proc (This:ptr IXAudio2SubmixVoice, Channels:UINT32, pVolumes:ptr float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetChannelVolumes*: proc (This:ptr IXAudio2SubmixVoice, Channels:UINT32, pVolumes:ptr float, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetChannelVolumes*: proc (This:ptr IXAudio2SubmixVoice, Channels:UINT32, pVolumes:ptr float) {.stdcall.}
-        SetOutputMatrix*: proc (This:ptr IXAudio2SubmixVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetOutputMatrix*: proc (This:ptr IXAudio2SubmixVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetOutputMatrix*: proc (This:ptr IXAudio2SubmixVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float) {.stdcall.}
         DestroyVoice*: proc (This:ptr IXAudio2SubmixVoice) {.stdcall.}
     IXAudio2SubmixVoice* = object
@@ -523,18 +526,18 @@ type
         GetVoiceDetails*: proc (This:ptr IXAudio20MasteringVoice, pVoiceDetails:ptr XAUDIO27_VOICE_DETAILS) {.stdcall.}
         SetOutputVoices*: proc (This:ptr IXAudio20MasteringVoice, pSendList:ptr XAUDIO23_VOICE_SENDS): HRESULT {.stdcall.}
         SetEffectChain*: proc (This:ptr IXAudio20MasteringVoice, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN): HRESULT {.stdcall.}
-        EnableEffect*: proc (This:ptr IXAudio20MasteringVoice, EffectIndex:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
-        DisableEffect*: proc (This:ptr IXAudio20MasteringVoice, EffectIndex:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
+        EnableEffect*: proc (This:ptr IXAudio20MasteringVoice, EffectIndex:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
+        DisableEffect*: proc (This:ptr IXAudio20MasteringVoice, EffectIndex:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetEffectState*: proc (This:ptr IXAudio20MasteringVoice, EffectIndex:UINT32, pEnabled:ptr BOOL) {.stdcall.}
-        SetEffectParameters*: proc (This:ptr IXAudio20MasteringVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetEffectParameters*: proc (This:ptr IXAudio20MasteringVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetEffectParameters*: proc (This:ptr IXAudio20MasteringVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32): HRESULT {.stdcall.}
-        SetFilterParameters*: proc (This:ptr IXAudio20MasteringVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetFilterParameters*: proc (This:ptr IXAudio20MasteringVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetFilterParameters*: proc (This:ptr IXAudio20MasteringVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS) {.stdcall.}
-        SetVolume*: proc (This:ptr IXAudio20MasteringVoice, Volume:float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetVolume*: proc (This:ptr IXAudio20MasteringVoice, Volume:cfloat, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetVolume*: proc (This:ptr IXAudio20MasteringVoice, pVolume:ptr float) {.stdcall.}
-        SetChannelVolumes*: proc (This:ptr IXAudio20MasteringVoice, Channels:UINT32, pVolumes:ptr float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetChannelVolumes*: proc (This:ptr IXAudio20MasteringVoice, Channels:UINT32, pVolumes:ptr float, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetChannelVolumes*: proc (This:ptr IXAudio20MasteringVoice, Channels:UINT32, pVolumes:ptr float) {.stdcall.}
-        SetOutputMatrix*: proc (This:ptr IXAudio20MasteringVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetOutputMatrix*: proc (This:ptr IXAudio20MasteringVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetOutputMatrix*: proc (This:ptr IXAudio20MasteringVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float): HRESULT {.stdcall.}
         DestroyVoice*: proc (This:ptr IXAudio20MasteringVoice) {.stdcall.}
     IXAudio20MasteringVoice* = object
@@ -543,18 +546,18 @@ type
         GetVoiceDetails*: proc (This:ptr IXAudio23MasteringVoice, pVoiceDetails:ptr XAUDIO27_VOICE_DETAILS) {.stdcall.}
         SetOutputVoices*: proc (This:ptr IXAudio23MasteringVoice, pSendList:ptr XAUDIO23_VOICE_SENDS): HRESULT {.stdcall.}
         SetEffectChain*: proc (This:ptr IXAudio23MasteringVoice, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN): HRESULT {.stdcall.}
-        EnableEffect*: proc (This:ptr IXAudio23MasteringVoice, EffectIndex:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
-        DisableEffect*: proc (This:ptr IXAudio23MasteringVoice, EffectIndex:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
+        EnableEffect*: proc (This:ptr IXAudio23MasteringVoice, EffectIndex:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
+        DisableEffect*: proc (This:ptr IXAudio23MasteringVoice, EffectIndex:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetEffectState*: proc (This:ptr IXAudio23MasteringVoice, EffectIndex:UINT32, pEnabled:ptr BOOL) {.stdcall.}
-        SetEffectParameters*: proc (This:ptr IXAudio23MasteringVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetEffectParameters*: proc (This:ptr IXAudio23MasteringVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetEffectParameters*: proc (This:ptr IXAudio23MasteringVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32): HRESULT {.stdcall.}
-        SetFilterParameters*: proc (This:ptr IXAudio23MasteringVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetFilterParameters*: proc (This:ptr IXAudio23MasteringVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetFilterParameters*: proc (This:ptr IXAudio23MasteringVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS) {.stdcall.}
-        SetVolume*: proc (This:ptr IXAudio23MasteringVoice, Volume:float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetVolume*: proc (This:ptr IXAudio23MasteringVoice, Volume:cfloat, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetVolume*: proc (This:ptr IXAudio23MasteringVoice, pVolume:ptr float) {.stdcall.}
-        SetChannelVolumes*: proc (This:ptr IXAudio23MasteringVoice, Channels:UINT32, pVolumes:ptr float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetChannelVolumes*: proc (This:ptr IXAudio23MasteringVoice, Channels:UINT32, pVolumes:ptr float, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetChannelVolumes*: proc (This:ptr IXAudio23MasteringVoice, Channels:UINT32, pVolumes:ptr float) {.stdcall.}
-        SetOutputMatrix*: proc (This:ptr IXAudio23MasteringVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetOutputMatrix*: proc (This:ptr IXAudio23MasteringVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetOutputMatrix*: proc (This:ptr IXAudio23MasteringVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float) {.stdcall.}
         DestroyVoice*: proc (This:ptr IXAudio23MasteringVoice) {.stdcall.}
     IXAudio23MasteringVoice* = object
@@ -563,20 +566,20 @@ type
         GetVoiceDetails*: proc (This:ptr IXAudio27MasteringVoice, pVoiceDetails:ptr XAUDIO27_VOICE_DETAILS) {.stdcall.}
         SetOutputVoices*: proc (This:ptr IXAudio27MasteringVoice, pSendList:ptr XAUDIO2_VOICE_SENDS): HRESULT {.stdcall.}
         SetEffectChain*: proc (This:ptr IXAudio27MasteringVoice, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN): HRESULT {.stdcall.}
-        EnableEffect*: proc (This:ptr IXAudio27MasteringVoice, EffectIndex:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
-        DisableEffect*: proc (This:ptr IXAudio27MasteringVoice, EffectIndex:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
+        EnableEffect*: proc (This:ptr IXAudio27MasteringVoice, EffectIndex:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
+        DisableEffect*: proc (This:ptr IXAudio27MasteringVoice, EffectIndex:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetEffectState*: proc (This:ptr IXAudio27MasteringVoice, EffectIndex:UINT32, pEnabled:ptr BOOL) {.stdcall.}
-        SetEffectParameters*: proc (This:ptr IXAudio27MasteringVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetEffectParameters*: proc (This:ptr IXAudio27MasteringVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetEffectParameters*: proc (This:ptr IXAudio27MasteringVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32): HRESULT {.stdcall.}
-        SetFilterParameters*: proc (This:ptr IXAudio27MasteringVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetFilterParameters*: proc (This:ptr IXAudio27MasteringVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetFilterParameters*: proc (This:ptr IXAudio27MasteringVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS) {.stdcall.}
-        SetOutputFilterParameters*: proc (This:ptr IXAudio27MasteringVoice, pDestinationVoice:ptr IXAudio2Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetOutputFilterParameters*: proc (This:ptr IXAudio27MasteringVoice, pDestinationVoice:ptr IXAudio2Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetOutputFilterParameters*: proc (This:ptr IXAudio27MasteringVoice, pDestinationVoice:ptr IXAudio2Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS) {.stdcall.}
-        SetVolume*: proc (This:ptr IXAudio27MasteringVoice, Volume:float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetVolume*: proc (This:ptr IXAudio27MasteringVoice, Volume:cfloat, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetVolume*: proc (This:ptr IXAudio27MasteringVoice, pVolume:ptr float) {.stdcall.}
-        SetChannelVolumes*: proc (This:ptr IXAudio27MasteringVoice, Channels:UINT32, pVolumes:ptr float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetChannelVolumes*: proc (This:ptr IXAudio27MasteringVoice, Channels:UINT32, pVolumes:ptr float, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetChannelVolumes*: proc (This:ptr IXAudio27MasteringVoice, Channels:UINT32, pVolumes:ptr float) {.stdcall.}
-        SetOutputMatrix*: proc (This:ptr IXAudio27MasteringVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetOutputMatrix*: proc (This:ptr IXAudio27MasteringVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetOutputMatrix*: proc (This:ptr IXAudio27MasteringVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float) {.stdcall.}
         DestroyVoice*: proc (This:ptr IXAudio27MasteringVoice) {.stdcall.}
     IXAudio27MasteringVoice* = object
@@ -585,20 +588,20 @@ type
         GetVoiceDetails*: proc (This:ptr IXAudio2MasteringVoice, pVoiceDetails:ptr XAUDIO2_VOICE_DETAILS) {.stdcall.}
         SetOutputVoices*: proc (This:ptr IXAudio2MasteringVoice, pSendList:ptr XAUDIO2_VOICE_SENDS): HRESULT {.stdcall.}
         SetEffectChain*: proc (This:ptr IXAudio2MasteringVoice, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN): HRESULT {.stdcall.}
-        EnableEffect*: proc (This:ptr IXAudio2MasteringVoice, EffectIndex:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
-        DisableEffect*: proc (This:ptr IXAudio2MasteringVoice, EffectIndex:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
+        EnableEffect*: proc (This:ptr IXAudio2MasteringVoice, EffectIndex:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
+        DisableEffect*: proc (This:ptr IXAudio2MasteringVoice, EffectIndex:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetEffectState*: proc (This:ptr IXAudio2MasteringVoice, EffectIndex:UINT32, pEnabled:ptr BOOL) {.stdcall.}
-        SetEffectParameters*: proc (This:ptr IXAudio2MasteringVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetEffectParameters*: proc (This:ptr IXAudio2MasteringVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetEffectParameters*: proc (This:ptr IXAudio2MasteringVoice, EffectIndex:UINT32, pParameters:pointer, ParametersByteSize:UINT32): HRESULT {.stdcall.}
-        SetFilterParameters*: proc (This:ptr IXAudio2MasteringVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetFilterParameters*: proc (This:ptr IXAudio2MasteringVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetFilterParameters*: proc (This:ptr IXAudio2MasteringVoice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS) {.stdcall.}
-        SetOutputFilterParameters*: proc (This:ptr IXAudio2MasteringVoice, pDestinationVoice:ptr IXAudio2Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetOutputFilterParameters*: proc (This:ptr IXAudio2MasteringVoice, pDestinationVoice:ptr IXAudio2Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetOutputFilterParameters*: proc (This:ptr IXAudio2MasteringVoice, pDestinationVoice:ptr IXAudio2Voice, pParameters:ptr XAUDIO2_FILTER_PARAMETERS) {.stdcall.}
-        SetVolume*: proc (This:ptr IXAudio2MasteringVoice, Volume:float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetVolume*: proc (This:ptr IXAudio2MasteringVoice, Volume:cfloat, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetVolume*: proc (This:ptr IXAudio2MasteringVoice, pVolume:ptr float) {.stdcall.}
-        SetChannelVolumes*: proc (This:ptr IXAudio2MasteringVoice, Channels:UINT32, pVolumes:ptr float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetChannelVolumes*: proc (This:ptr IXAudio2MasteringVoice, Channels:UINT32, pVolumes:ptr float, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetChannelVolumes*: proc (This:ptr IXAudio2MasteringVoice, Channels:UINT32, pVolumes:ptr float) {.stdcall.}
-        SetOutputMatrix*: proc (This:ptr IXAudio2MasteringVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float, OperationSet:UINT32): HRESULT {.stdcall.}
+        SetOutputMatrix*: proc (This:ptr IXAudio2MasteringVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetOutputMatrix*: proc (This:ptr IXAudio2MasteringVoice, pDestinationVoice:ptr IXAudio2Voice, SourceChannels:UINT32, DestinationChannels:UINT32, pLevelMatrix:ptr float) {.stdcall.}
         DestroyVoice*: proc (This:ptr IXAudio2MasteringVoice) {.stdcall.}
         GetChannelMask*: proc (This:ptr IXAudio2MasteringVoice, pChannelMask:ptr DWORD) {.stdcall.}
@@ -633,14 +636,14 @@ type
         Initialize*: proc (This:ptr IXAudio20, Flags:UINT32, XAudio2Processor:XAUDIO2_PROCESSOR): HRESULT {.stdcall.}
         RegisterForCallbacks*: proc (This:ptr IXAudio20, pCallback:ptr IXAudio2EngineCallback): HRESULT {.stdcall.}
         UnregisterForCallbacks*: proc (This:ptr IXAudio20, pCallback:ptr IXAudio2EngineCallback) {.stdcall.}
-        CreateSourceVoice*: proc (This:ptr IXAudio20, ppSourceVoice:ptr ptr IXAudio2SourceVoice, pSourceFormat:ptr WAVEFORMATEX, Flags:UINT32, MaxFrequencyRatio:float, pCallback:ptr IXAudio2VoiceCallback, pSendList:ptr XAUDIO23_VOICE_SENDS, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN): HRESULT {.stdcall.}
-        CreateSubmixVoice*: proc (This:ptr IXAudio20, ppSubmixVoice:ptr ptr IXAudio2SubmixVoice, InputChannels:UINT32, InputSampleRate:UINT32, Flags:UINT32, ProcessingStage:UINT32, pSendList:ptr XAUDIO23_VOICE_SENDS, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN): HRESULT {.stdcall.}
-        CreateMasteringVoice*: proc (This:ptr IXAudio20, ppMasteringVoice:ptr ptr IXAudio2MasteringVoice, InputChannels:UINT32, InputSampleRate:UINT32, Flags:UINT32, DeviceIndex:UINT32, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN): HRESULT {.stdcall.}
+        CreateSourceVoice*: proc (This:ptr IXAudio20, ppSourceVoice:ptr ptr IXAudio2SourceVoice, pSourceFormat:ptr WAVEFORMATEX, Flags:UINT32=0, MaxFrequencyRatio:cfloat=XAUDIO2_DEFAULT_FREQ_RATIO, pCallback:ptr IXAudio2VoiceCallback=nil, pSendList:ptr XAUDIO23_VOICE_SENDS=nil, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN=nil): HRESULT {.stdcall.}
+        CreateSubmixVoice*: proc (This:ptr IXAudio20, ppSubmixVoice:ptr ptr IXAudio2SubmixVoice, InputChannels:UINT32, InputSampleRate:UINT32, Flags:UINT32=0, ProcessingStage:UINT32=0, pSendList:ptr XAUDIO23_VOICE_SENDS=nil, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN=nil): HRESULT {.stdcall.}
+        CreateMasteringVoice*: proc (This:ptr IXAudio20, ppMasteringVoice:ptr ptr IXAudio2MasteringVoice, InputChannels:UINT32=XAUDIO2_DEFAULT_CHANNELS, InputSampleRate:UINT32=XAUDIO2_DEFAULT_SAMPLERATE, Flags:UINT32=0, DeviceIndex:UINT32=0, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN=nil): HRESULT {.stdcall.}
         StartEngine*: proc (This:ptr IXAudio20): HRESULT {.stdcall.}
         StopEngine*: proc (This:ptr IXAudio20) {.stdcall.}
-        CommitChanges*: proc (This:ptr IXAudio20, OperationSet:UINT32): HRESULT {.stdcall.}
+        CommitChanges*: proc (This:ptr IXAudio20, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetPerformanceData*: proc (This:ptr IXAudio20, pPerfData:ptr XAUDIO20_PERFORMANCE_DATA) {.stdcall.}
-        SetDebugConfiguration*: proc (This:ptr IXAudio20, pDebugConfiguration:ptr XAUDIO2_DEBUG_CONFIGURATION, pReserved:pointer) {.stdcall.}
+        SetDebugConfiguration*: proc (This:ptr IXAudio20, pDebugConfiguration:ptr XAUDIO2_DEBUG_CONFIGURATION, pReserved:pointer=nil) {.stdcall.}
     IXAudio20* = object
         lpVtbl*: ptr IXAudio20Vtbl
     IXAudio22Vtbl* = object
@@ -652,14 +655,14 @@ type
         Initialize*: proc (This:ptr IXAudio22, Flags:UINT32, XAudio2Processor:XAUDIO2_PROCESSOR): HRESULT {.stdcall.}
         RegisterForCallbacks*: proc (This:ptr IXAudio22, pCallback:ptr IXAudio2EngineCallback): HRESULT {.stdcall.}
         UnregisterForCallbacks*: proc (This:ptr IXAudio22, pCallback:ptr IXAudio2EngineCallback) {.stdcall.}
-        CreateSourceVoice*: proc (This:ptr IXAudio22, ppSourceVoice:ptr ptr IXAudio2SourceVoice, pSourceFormat:ptr WAVEFORMATEX, Flags:UINT32, MaxFrequencyRatio:float, pCallback:ptr IXAudio2VoiceCallback, pSendList:ptr XAUDIO23_VOICE_SENDS, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN): HRESULT {.stdcall.}
-        CreateSubmixVoice*: proc (This:ptr IXAudio22, ppSubmixVoice:ptr ptr IXAudio2SubmixVoice, InputChannels:UINT32, InputSampleRate:UINT32, Flags:UINT32, ProcessingStage:UINT32, pSendList:ptr XAUDIO23_VOICE_SENDS, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN): HRESULT {.stdcall.}
-        CreateMasteringVoice*: proc (This:ptr IXAudio22, ppMasteringVoice:ptr ptr IXAudio2MasteringVoice, InputChannels:UINT32, InputSampleRate:UINT32, Flags:UINT32, DeviceIndex:UINT32, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN): HRESULT {.stdcall.}
+        CreateSourceVoice*: proc (This:ptr IXAudio22, ppSourceVoice:ptr ptr IXAudio2SourceVoice, pSourceFormat:ptr WAVEFORMATEX, Flags:UINT32=0, MaxFrequencyRatio:cfloat=XAUDIO2_DEFAULT_FREQ_RATIO, pCallback:ptr IXAudio2VoiceCallback=nil, pSendList:ptr XAUDIO23_VOICE_SENDS=nil, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN=nil): HRESULT {.stdcall.}
+        CreateSubmixVoice*: proc (This:ptr IXAudio22, ppSubmixVoice:ptr ptr IXAudio2SubmixVoice, InputChannels:UINT32, InputSampleRate:UINT32, Flags:UINT32=0, ProcessingStage:UINT32=0, pSendList:ptr XAUDIO23_VOICE_SENDS=nil, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN=nil): HRESULT {.stdcall.}
+        CreateMasteringVoice*: proc (This:ptr IXAudio22, ppMasteringVoice:ptr ptr IXAudio2MasteringVoice, InputChannels:UINT32=XAUDIO2_DEFAULT_CHANNELS, InputSampleRate:UINT32=XAUDIO2_DEFAULT_SAMPLERATE, Flags:UINT32=0, DeviceIndex:UINT32=0, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN=nil): HRESULT {.stdcall.}
         StartEngine*: proc (This:ptr IXAudio22): HRESULT {.stdcall.}
         StopEngine*: proc (This:ptr IXAudio22) {.stdcall.}
-        CommitChanges*: proc (This:ptr IXAudio22, OperationSet:UINT32): HRESULT {.stdcall.}
+        CommitChanges*: proc (This:ptr IXAudio22, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetPerformanceData*: proc (This:ptr IXAudio22, pPerfData:ptr XAUDIO22_PERFORMANCE_DATA) {.stdcall.}
-        SetDebugConfiguration*: proc (This:ptr IXAudio22, pDebugConfiguration:ptr XAUDIO2_DEBUG_CONFIGURATION, pReserved:pointer) {.stdcall.}
+        SetDebugConfiguration*: proc (This:ptr IXAudio22, pDebugConfiguration:ptr XAUDIO2_DEBUG_CONFIGURATION, pReserved:pointer=nil) {.stdcall.}
     IXAudio22* = object
         lpVtbl*: ptr IXAudio22Vtbl
     IXAudio23Vtbl* = object
@@ -671,14 +674,14 @@ type
         Initialize*: proc (This:ptr IXAudio23, Flags:UINT32, XAudio2Processor:XAUDIO2_PROCESSOR): HRESULT {.stdcall.}
         RegisterForCallbacks*: proc (This:ptr IXAudio23, pCallback:ptr IXAudio2EngineCallback): HRESULT {.stdcall.}
         UnregisterForCallbacks*: proc (This:ptr IXAudio23, pCallback:ptr IXAudio2EngineCallback) {.stdcall.}
-        CreateSourceVoice*: proc (This:ptr IXAudio23, ppSourceVoice:ptr ptr IXAudio2SourceVoice, pSourceFormat:ptr WAVEFORMATEX, Flags:UINT32, MaxFrequencyRatio:float, pCallback:ptr IXAudio2VoiceCallback, pSendList:ptr XAUDIO23_VOICE_SENDS, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN): HRESULT {.stdcall.}
-        CreateSubmixVoice*: proc (This:ptr IXAudio23, ppSubmixVoice:ptr ptr IXAudio2SubmixVoice, InputChannels:UINT32, InputSampleRate:UINT32, Flags:UINT32, ProcessingStage:UINT32, pSendList:ptr XAUDIO23_VOICE_SENDS, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN): HRESULT {.stdcall.}
-        CreateMasteringVoice*: proc (This:ptr IXAudio23, ppMasteringVoice:ptr ptr IXAudio2MasteringVoice, InputChannels:UINT32, InputSampleRate:UINT32, Flags:UINT32, DeviceIndex:UINT32, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN): HRESULT {.stdcall.}
+        CreateSourceVoice*: proc (This:ptr IXAudio23, ppSourceVoice:ptr ptr IXAudio2SourceVoice, pSourceFormat:ptr WAVEFORMATEX, Flags:UINT32=0, MaxFrequencyRatio:cfloat=XAUDIO2_DEFAULT_FREQ_RATIO, pCallback:ptr IXAudio2VoiceCallback=nil, pSendList:ptr XAUDIO23_VOICE_SENDS=nil, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN=nil): HRESULT {.stdcall.}
+        CreateSubmixVoice*: proc (This:ptr IXAudio23, ppSubmixVoice:ptr ptr IXAudio2SubmixVoice, InputChannels:UINT32, InputSampleRate:UINT32, Flags:UINT32=0, ProcessingStage:UINT32=0, pSendList:ptr XAUDIO23_VOICE_SENDS=nil, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN=nil): HRESULT {.stdcall.}
+        CreateMasteringVoice*: proc (This:ptr IXAudio23, ppMasteringVoice:ptr ptr IXAudio2MasteringVoice, InputChannels:UINT32=XAUDIO2_DEFAULT_CHANNELS, InputSampleRate:UINT32=XAUDIO2_DEFAULT_SAMPLERATE, Flags:UINT32=0, DeviceIndex:UINT32=0, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN=nil): HRESULT {.stdcall.}
         StartEngine*: proc (This:ptr IXAudio23): HRESULT {.stdcall.}
         StopEngine*: proc (This:ptr IXAudio23) {.stdcall.}
-        CommitChanges*: proc (This:ptr IXAudio23, OperationSet:UINT32): HRESULT {.stdcall.}
+        CommitChanges*: proc (This:ptr IXAudio23, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetPerformanceData*: proc (This:ptr IXAudio23, pPerfData:ptr XAUDIO2_PERFORMANCE_DATA) {.stdcall.}
-        SetDebugConfiguration*: proc (This:ptr IXAudio23, pDebugConfiguration:ptr XAUDIO2_DEBUG_CONFIGURATION, pReserved:pointer) {.stdcall.}
+        SetDebugConfiguration*: proc (This:ptr IXAudio23, pDebugConfiguration:ptr XAUDIO2_DEBUG_CONFIGURATION, pReserved:pointer=nil) {.stdcall.}
     IXAudio23* = object
         lpVtbl*: ptr IXAudio23Vtbl
     IXAudio27Vtbl* = object
@@ -690,14 +693,14 @@ type
         Initialize*: proc (This:ptr IXAudio27, Flags:UINT32, XAudio2Processor:XAUDIO2_PROCESSOR): HRESULT {.stdcall.}
         RegisterForCallbacks*: proc (This:ptr IXAudio27, pCallback:ptr IXAudio2EngineCallback): HRESULT {.stdcall.}
         UnregisterForCallbacks*: proc (This:ptr IXAudio27, pCallback:ptr IXAudio2EngineCallback) {.stdcall.}
-        CreateSourceVoice*: proc (This:ptr IXAudio27, ppSourceVoice:ptr ptr IXAudio2SourceVoice, pSourceFormat:ptr WAVEFORMATEX, Flags:UINT32, MaxFrequencyRatio:float, pCallback:ptr IXAudio2VoiceCallback, pSendList:ptr XAUDIO2_VOICE_SENDS, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN): HRESULT {.stdcall.}
+        CreateSourceVoice*: proc (This:ptr IXAudio27, ppSourceVoice:ptr ptr IXAudio2SourceVoice, pSourceFormat:ptr WAVEFORMATEX, Flags:UINT32, MaxFrequencyRatio:cfloat, pCallback:ptr IXAudio2VoiceCallback, pSendList:ptr XAUDIO2_VOICE_SENDS, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN): HRESULT {.stdcall.}
         CreateSubmixVoice*: proc (This:ptr IXAudio27, ppSubmixVoice:ptr ptr IXAudio2SubmixVoice, InputChannels:UINT32, InputSampleRate:UINT32, Flags:UINT32, ProcessingStage:UINT32, pSendList:ptr XAUDIO2_VOICE_SENDS, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN): HRESULT {.stdcall.}
-        CreateMasteringVoice*: proc (This:ptr IXAudio27, ppMasteringVoice:ptr ptr IXAudio2MasteringVoice, InputChannels:UINT32, InputSampleRate:UINT32, Flags:UINT32, DeviceIndex:UINT32, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN): HRESULT {.stdcall.}
+        CreateMasteringVoice*: proc (This:ptr IXAudio27, ppMasteringVoice:ptr ptr IXAudio2MasteringVoice, InputChannels:UINT32=XAUDIO2_DEFAULT_CHANNELS, InputSampleRate:UINT32=XAUDIO2_DEFAULT_SAMPLERATE, Flags:UINT32=0, DeviceIndex:UINT32=0, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN=nil): HRESULT {.stdcall.}
         StartEngine*: proc (This:ptr IXAudio27): HRESULT {.stdcall.}
         StopEngine*: proc (This:ptr IXAudio27) {.stdcall.}
-        CommitChanges*: proc (This:ptr IXAudio27, OperationSet:UINT32): HRESULT {.stdcall.}
+        CommitChanges*: proc (This:ptr IXAudio27, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetPerformanceData*: proc (This:ptr IXAudio27, pPerfData:ptr XAUDIO2_PERFORMANCE_DATA) {.stdcall.}
-        SetDebugConfiguration*: proc (This:ptr IXAudio27, pDebugConfiguration:ptr XAUDIO2_DEBUG_CONFIGURATION, pReserved:pointer) {.stdcall.}
+        SetDebugConfiguration*: proc (This:ptr IXAudio27, pDebugConfiguration:ptr XAUDIO2_DEBUG_CONFIGURATION, pReserved:pointer=nil) {.stdcall.}
     IXAudio27* = object
         lpVtbl*: ptr IXAudio27Vtbl
     IXAudio2Vtbl* = object
@@ -706,14 +709,14 @@ type
         Release*: proc (This:ptr IXAudio2): ULONG {.stdcall.}
         RegisterForCallbacks*: proc (This:ptr IXAudio2, pCallback:ptr IXAudio2EngineCallback): HRESULT {.stdcall.}
         UnregisterForCallbacks*: proc (This:ptr IXAudio2, pCallback:ptr IXAudio2EngineCallback) {.stdcall.}
-        CreateSourceVoice*: proc (This:ptr IXAudio2, ppSourceVoice:ptr ptr IXAudio2SourceVoice, pSourceFormat:ptr WAVEFORMATEX, Flags:UINT32, MaxFrequencyRatio:float, pCallback:ptr IXAudio2VoiceCallback, pSendList:ptr XAUDIO2_VOICE_SENDS, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN): HRESULT {.stdcall.}
+        CreateSourceVoice*: proc (This:ptr IXAudio2, ppSourceVoice:ptr ptr IXAudio2SourceVoice, pSourceFormat:ptr WAVEFORMATEX, Flags:UINT32=0, MaxFrequencyRatio:cfloat=XAUDIO2_DEFAULT_FREQ_RATIO, pCallback:ptr IXAudio2VoiceCallback=nil, pSendList:ptr XAUDIO2_VOICE_SENDS=nil, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN=nil): HRESULT {.stdcall.}
         CreateSubmixVoice*: proc (This:ptr IXAudio2, ppSubmixVoice:ptr ptr IXAudio2SubmixVoice, InputChannels:UINT32, InputSampleRate:UINT32, Flags:UINT32, ProcessingStage:UINT32, pSendList:ptr XAUDIO2_VOICE_SENDS, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN): HRESULT {.stdcall.}
-        CreateMasteringVoice*: proc (This:ptr IXAudio2, ppMasteringVoice:ptr ptr IXAudio2MasteringVoice, InputChannels:UINT32, InputSampleRate:UINT32, Flags:UINT32, DeviceId:LPCWSTR, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN, StreamCategory:AUDIO_STREAM_CATEGORY): HRESULT {.stdcall.}
+        CreateMasteringVoice*: proc (This:ptr IXAudio2, ppMasteringVoice:ptr ptr IXAudio2MasteringVoice, InputChannels:UINT32=XAUDIO2_DEFAULT_CHANNELS, InputSampleRate:UINT32=XAUDIO2_DEFAULT_SAMPLERATE, Flags:UINT32=0, DeviceIndex:ptr WCHAR=nil, pEffectChain:ptr XAUDIO2_EFFECT_CHAIN=nil, StreamCategory=UINT32 AudioCategory_GameEffects): HRESULT {.stdcall.}
         StartEngine*: proc (This:ptr IXAudio2): HRESULT {.stdcall.}
         StopEngine*: proc (This:ptr IXAudio2) {.stdcall.}
-        CommitChanges*: proc (This:ptr IXAudio2, OperationSet:UINT32): HRESULT {.stdcall.}
+        CommitChanges*: proc (This:ptr IXAudio2, OperationSet:UINT32=XAUDIO2_COMMIT_NOW): HRESULT {.stdcall.}
         GetPerformanceData*: proc (This:ptr IXAudio2, pPerfData:ptr XAUDIO2_PERFORMANCE_DATA) {.stdcall.}
-        SetDebugConfiguration*: proc (This:ptr IXAudio2, pDebugConfiguration:ptr XAUDIO2_DEBUG_CONFIGURATION, pReserved:pointer) {.stdcall.}
+        SetDebugConfiguration*: proc (This:ptr IXAudio2, pDebugConfiguration:ptr XAUDIO2_DEBUG_CONFIGURATION, pReserved:pointer=nil) {.stdcall.}
     IXAudio2* = object
         lpVtbl*: ptr IXAudio2Vtbl
 
@@ -1856,9 +1859,9 @@ template IXAudio23_CreateSubmixVoice*(This, ppSubmixVoice, InputChannels,
                                   InputSampleRate, Flags, ProcessingStage,
                                   pSendList, pEffectChain)
 
-template IXAudio23_CreateMasteringVoice*(This, ppMasteringVoice, InputChannels,
-                                        InputSampleRate, Flags, DeviceIndex,
-                                        pEffectChain: untyped): untyped =
+template IXAudio23_CreateMasteringVoice*(This, ppMasteringVoice, InputChannels = XAUDIO2_DEFAULT_CHANNELS,
+                                        InputSampleRate = XAUDIO2_DEFAULT_SAMPLERATE, Flags=0, DeviceIndex=0,
+                                        pEffectChain: untyped=0): untyped =
   (This).lpVtbl.CreateMasteringVoice(This, ppMasteringVoice, InputChannels,
                                      InputSampleRate, Flags, DeviceIndex,
                                      pEffectChain)
@@ -2042,4 +2045,4 @@ proc XAudio2CutoffFrequencyToRadians*(cutofffreq: cfloat; samplerate: UINT32): c
 proc XAudio2RadiansToCutoffFrequency*(radians: cfloat; samplerate: cfloat): cfloat {.inline.} =
   return samplerate * arcsin(radians / 2.0f) / cfloat PI
 
-proc XAudio2Create*(pxaudio2: ptr ptr IXAudio2; flags: UINT32; processor: XAUDIO2_PROCESSOR): HRESULT {.stdcall, importc.}
+proc XAudio2Create*(pxaudio2: ptr ptr IXAudio2, flags: UINT32, processor: XAUDIO2_PROCESSOR): HRESULT {.stdcall, importc.}
