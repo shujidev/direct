@@ -9,7 +9,7 @@ nimble install https://github.com/shujidev/direct
 ```
 
 ### Missing parts:
-Currently functions have to be called like this example for compatibility with the C backend
+Currently functions have to be called like this example for compatibility with C
 ```nim
 renderTarget.lpVtbl.BeginDraw(renderTarget)
 ```
@@ -35,7 +35,7 @@ Direct headers also include definitions to call directly the methods which I hav
 
 
 ### Create functions
-An object can be created with factories, this pattern can be helpful to create self destructing objects
+An object can be created with factories, this pattern can be helpful to create self destructing objects, I suppose this could also be made with com pointers (smart pointers with com destructors) as mentioned here: https://learn.microsoft.com/en-us/windows/win32/xaudio2/how-to--play-a-sound-with-xaudio2
 ```nim
 type RenderTarget* = object
     p:ptr ID2D1RenderTarget
