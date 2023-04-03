@@ -30,7 +30,7 @@ hr = pSourceVoice.lpVtbl.Start(pSourceVoice)
 if hr!=S_OK: echo "Start error ",hr.toHex
   
 # Fill array with sound data
-var soundData:array[5 * 1 * 44100, cshort]
+var soundData:array[5 * 44100, cshort]
 var index = 0
 for second in 0..<5:
     for cycle in 0..<441:
