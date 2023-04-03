@@ -1,6 +1,6 @@
 
 import window_winim
-import winim/lean, winim/clr
+import winim/lean, winim/com
 if CoInitialize(nil)!=S_OK: echo "CoInitialize error"
 
 

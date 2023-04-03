@@ -1,6 +1,6 @@
 
 import window_winim
-import winim/lean, winim/clr
+import winim/lean, winim/com
 if CoInitializeEx(nil, COINIT_MULTITHREADED)!=S_OK: echo "CoInitializeEx error "
 
 import direct/xaudio2
@@ -21,14 +21,14 @@ hr = pXAudio2.lpVtbl.CreateMasteringVoice(pXAudio2, addr pMaster)
 if hr!=S_OK: echo "CreateMasteringVoice error ", hr.toHex
 
 #Loading file
-#~ when not defined(XBOX): # //Little-Endian
+#~ when not defined(XBOX): # //Little-Endian (multichar UINT32)
 var
     fourccRIFF = cast[UINT32](('R','I','F','F'))
     fourccDATA = cast[UINT32](('d','a','t','a'))
     fourccFMT = cast[UINT32](('f','m','t',' '))
     fourccWAVE = cast[UINT32](('W','A','V','E'))
-    fourccXWMA = "AMWX"
-    fourccDPDS = "sdpd"
+    fourccXWMA = cast[UINT32](('X','W','M','A'))
+    fourccDPDS = cast[UINT32](('d','p','d','s'))
     
 proc FindChunk(hFile:HANDLE, fourcc:UINT32, dwChunkSize, dwChunkDataPosition: var UINT32): HRESULT =
     var hr = S_OK;
@@ -95,7 +95,7 @@ if INVALID_SET_FILE_POINTER == SetFilePointer( hFile, 0, nil, FILE_BEGIN ):
     
 var wfx: WAVEFORMATEXTENSIBLE
 var dwChunkSize, dwChunkPosition: UINT32
-#check the file type, should be fourccWAVE or 'XWMA'
+#check the file type, should be 'WAVE' or 'XWMA'
 #Locate the 'RIFF' chunk in file
 hr = FindChunk(hFile,fourccRIFF,dwChunkSize, dwChunkPosition)
 if hr!=S_OK: echo "FindChunk error ",hr.toHex
