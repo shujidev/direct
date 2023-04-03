@@ -51,7 +51,7 @@ var timbreSoundData: array[samples * channels, int16]
     #~ var amplitude = pow(2, 15 * t) - 1
     #~ var waveform = if sample mod 100<50: 1.0 else: -1.0
     #~ var value = int16(amplitude * waveform)
-    #~ volumeSoundData[index] = value
+    #~ volumeSoundData[index] = value #first channel
     #~ index.inc
     #~ volumeSoundData[index] = value
     #~ index.inc
@@ -71,7 +71,7 @@ for sample in 0..<samples:
     angle += angleIncrement
     while angle > 360: angle -= 360
     var value:int16 = if angle<180: 32767 else: -32767
-    pitchSoundData[index] = value
+    pitchSoundData[index] = value #first channel
     index.inc
     pitchSoundData[index] = value
     index.inc
