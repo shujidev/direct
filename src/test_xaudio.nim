@@ -11,24 +11,25 @@ var pMaster: ptr IXAudio2MasteringVoice
 var hr = XAudio2Create(addr pXAudio2, flags=0, XAUDIO2_ANY_PROCESSOR)
 if hr!=S_OK: echo "XAudio2Create error ", hr.toHex
 
+#just to test if it works
 var perf:XAUDIO2_PERFORMANCE_DATA
 pXAudio2.lpVtbl.GetPerformanceData(pXAudio2, addr perf)
 echo perf
 
-var chain = XAUDIO2_EFFECT_CHAIN(EffectCount:0, pEffectDescriptors:nil)
-var cat = AudioCategory_GameEffects
+#~ var chain = XAUDIO2_EFFECT_CHAIN(EffectCount:0, pEffectDescriptors:nil)
+#~ var cat = AudioCategory_GameEffects
 hr = pXAudio2.lpVtbl.CreateMasteringVoice(pXAudio2, addr pMaster)
 if hr!=S_OK: echo "CreateMasteringVoice error ", hr.toHex
 
 #Loading file
-#~ when not defined(XBOX): # //Little-Endian (multichar UINT32)
-var
-    fourccRIFF = cast[UINT32](('R','I','F','F'))
-    fourccDATA = cast[UINT32](('d','a','t','a'))
-    fourccFMT = cast[UINT32](('f','m','t',' '))
-    fourccWAVE = cast[UINT32](('W','A','V','E'))
-    fourccXWMA = cast[UINT32](('X','W','M','A'))
-    fourccDPDS = cast[UINT32](('d','p','d','s'))
+when not defined(XBOX): # //Little-Endian (multichar UINT32)
+    var
+        fourccRIFF = cast[UINT32](('R','I','F','F'))
+        fourccDATA = cast[UINT32](('d','a','t','a'))
+        fourccFMT = cast[UINT32](('f','m','t',' '))
+        fourccWAVE = cast[UINT32](('W','A','V','E'))
+        fourccXWMA = cast[UINT32](('X','W','M','A'))
+        fourccDPDS = cast[UINT32](('d','p','d','s'))
     
 proc FindChunk(hFile:HANDLE, fourcc:UINT32, dwChunkSize, dwChunkDataPosition: var UINT32): HRESULT =
     var hr = S_OK;
@@ -97,9 +98,9 @@ var wfx: WAVEFORMATEXTENSIBLE
 var dwChunkSize, dwChunkPosition: UINT32
 #check the file type, should be 'WAVE' or 'XWMA'
 #Locate the 'RIFF' chunk in file
-hr = FindChunk(hFile,fourccRIFF,dwChunkSize, dwChunkPosition)
+hr = FindChunk(hFile, fourccRIFF, dwChunkSize, dwChunkPosition)
 if hr!=S_OK: echo "FindChunk error ",hr.toHex
-echo "RIFF multi character constant",(size:dwChunkSize, position:dwChunkPosition)
+echo "RIFF multi character constant ",(dwChunkSize:dwChunkSize, dwChunkPosition:dwChunkPosition)
 var filetype: UINT32
 hr = ReadChunkData(hFile,&filetype,UINT32 sizeof(DWORD),dwChunkPosition)
 if hr!=S_OK: echo "ReadChunkData error ",hr.toHex
