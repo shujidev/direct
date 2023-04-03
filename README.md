@@ -35,7 +35,7 @@ Direct headers also include definitions to call directly the methods which I hav
 
 
 ### Create functions
-An object can be created with factories, this pattern can be helpful to create self destructing objects
+An object can be created with factories, this pattern can be helpful to create self destructing objects, I suppose this could also be made with com pointers (smart pointers with com destructors)
 ```nim
 type RenderTarget* = object
     p:ptr ID2D1RenderTarget
