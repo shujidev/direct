@@ -3,6 +3,7 @@ import winim/lean, winim/com
 if CoInitializeEx(nil, COINIT_MULTITHREADED)!=S_OK: echo "CoInitializeEx error "
 
 import direct/xaudio2
+import math
 
 #Initialization
 var pXAudio2: ptr IXAudio2
@@ -19,7 +20,6 @@ waveformat.nSamplesPerSec = 44100
 waveformat.nAvgBytesPerSec = 44100 * 2
 waveformat.nBlockAlign = 2
 waveformat.wBitsPerSample = 16
-#~ waveformat.cbSize = 24932
 waveformat.cbSize = 0
 
 
@@ -30,37 +30,26 @@ hr = pSourceVoice.lpVtbl.Start(pSourceVoice)
 if hr!=S_OK: echo "Start error ",hr.toHex
   
 # Fill array with sound data
-var soundData:array[5 * 44100, cshort]
+const seconds = 1
+const sampleRate = 44100
+const samples = seconds * sampleRate
+var soundData: array[samples, int16]
 var index = 0
-for second in 0..<5:
+for second in 0..<seconds:
     for cycle in 0..<441:
         for sample in 0..<100:
-            var value = if sample < 50: 32767.cshort else: -32768.cshort
+            var value:int16 = if sample < 50: 32767 else: -32768 #square wave (half cycle up, half down)
             soundData[index] = value
             index.inc
 
 var buffer: XAUDIO2_BUFFER
-buffer.AudioBytes = 2 * 5 * 44100;
+buffer.AudioBytes = 2 * samples
 buffer.pAudioData = cast[ptr BYTE](addr soundData[0])
-buffer.Flags = XAUDIO2_END_OF_STREAM;
-buffer.PlayBegin = 0;
-buffer.PlayLength = 5 * 44100;
+buffer.Flags = XAUDIO2_END_OF_STREAM
+buffer.PlayBegin = 0
+buffer.PlayLength = samples
   
 hr = pSourceVoice.lpVtbl.SubmitSourceBuffer(pSourceVoice, &buffer)
 if hr!=S_OK: echo "SubmitSourceBuffer error ",hr.toHex
   
 start_window()
-
-#test for generating audio (not finished)
-#~ var activeChannels, idleChannels:seq[Channel] #idle channels go to active while playing, when finished they return to idleChannels
-#~ var nChannels = 64
-#~ for i in 0..<nChannels:
-    #~ idleChannels.add Channel(obj)
-
-#~ proc play(s:Sound) =
-    #~ if idleChannels.len!=0:
-        #~ activeChannels.add idleChannels[^1]
-        #~ activeChannels[^1].play(s) 
-#~ proc deactivateChannel(channel:Channel) =
-    #~ idleChannels.add channel
-    #~ activeChannels.delete activeChannels.find(channel)
