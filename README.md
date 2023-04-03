@@ -24,15 +24,6 @@ converter toDXGIDevice*(x:ptr IDXGIDevice1):ptr IDXGIDevice = cast[ptr IDXGIDevi
 converter toDXGIDevice*(x:ptr IDXGIDevice2):ptr IDXGIDevice = cast[ptr IDXGIDevice](x)
 ```
 
-Direct headers also include definitions to call directly the methods which I have not transcribed, they look something like this:
-```c
-#if !defined(__cplusplus) || defined(CINTERFACE)
-/*** IUnknown methods ***/
-#define IDirectSound_QueryInterface(p,a,b) (p)->lpVtbl->QueryInterface(p,a,b)
-#define IDirectSound_AddRef(p)             (p)->lpVtbl->AddRef(p)
-#define IDirectSound_Release(p)            (p)->lpVtbl->Release(p)
-```
-
 
 ### Create functions
 An object can be created with factories, this pattern can be helpful to create self destructing objects, I suppose this could also be made with com pointers (smart pointers with com destructors) as mentioned here: https://learn.microsoft.com/en-us/windows/win32/xaudio2/how-to--play-a-sound-with-xaudio2
