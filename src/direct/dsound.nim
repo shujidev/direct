@@ -1080,8 +1080,8 @@ type
 #define DirectSoundFullDuplexCreate8 DirectSoundFullDuplexCreate
 #~ extern HRESULT WINAPI GetDeviceID(ptr GUID lpGuidSrc, ptr GUID lpGuidDest);
 
-type DSENUMCALLBACKW* = proc(guid:ptr GUID,str:ptr WCHAR, str2:ptr WCHAR, p:pointer): BOOL {.cdecl.}
-type DSENUMCALLBACKA* = proc(guid:ptr GUID,str:ptr CHAR, str2:ptr CHAR, p:pointer): BOOL {.cdecl.}
+type DSENUMCALLBACKW* = proc(guid:ptr GUID,str:ptr WCHAR, str2:ptr WCHAR, p:pointer): BOOL {.stdcall.}
+type DSENUMCALLBACKA* = proc(guid:ptr GUID,str:ptr CHAR, str2:ptr CHAR, p:pointer): BOOL {.stdcall.}
 type LPDSENUMCALLBACKA* = ptr DSENUMCALLBACKA
 
 proc DirectSoundCreate*(lpGUID:ptr GUID, ppDS:ptr ptr IDirectSound, pUnkOuter:ptr IUnknown): HRESULT {.stdcall, importc.}

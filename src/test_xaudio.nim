@@ -33,25 +33,20 @@ when not defined(XBOX): # //Little-Endian (multichar UINT32)
     
 proc FindChunk(hFile:HANDLE, fourcc:UINT32, dwChunkSize, dwChunkDataPosition: var UINT32): HRESULT =
     var hr = S_OK;
-    if INVALID_SET_FILE_POINTER == SetFilePointer( hFile, 0, NULL, FILE_BEGIN ):
-        echo "SetFilePointer error"
+    if INVALID_SET_FILE_POINTER == SetFilePointer(hFile, 0, NULL, FILE_BEGIN):
         return HRESULT_FROM_WIN32 GetLastError()
 
     var dwChunkType, dwChunkDataSize, dwRIFFDataSize, dwFileType, bytesRead, dwOffset: UINT32
 
     while hr == S_OK:
-        #~ echo "looping"
         var dwRead:DWORD
         if 0 == ReadFile( hFile, &dwChunkType, sizeof(DWORD).DWORD, &dwRead, NULL ):
-            echo "ReadFile 1 error"
             hr = HRESULT_FROM_WIN32 GetLastError()
 
         if 0 == ReadFile( hFile, &dwChunkDataSize, sizeof(DWORD).DWORD, &dwRead, NULL ):
-            echo "ReadFile 2 error"
             hr = HRESULT_FROM_WIN32 GetLastError()
 
         if dwChunkType==fourccRIFF:
-            #~ echo "found fourccRIFF"
             dwRIFFDataSize = dwChunkDataSize;
             dwChunkDataSize = 4;
             if 0 == ReadFile( hFile, &dwFileType, sizeof(DWORD).DWORD, &dwRead, NULL ):
@@ -59,22 +54,19 @@ proc FindChunk(hFile:HANDLE, fourcc:UINT32, dwChunkSize, dwChunkDataPosition: va
 
         else:
             if INVALID_SET_FILE_POINTER == SetFilePointer( hFile, dwChunkDataSize.LONG, NULL, FILE_CURRENT):
-                echo "SetFilePointer 2 error"
                 return HRESULT_FROM_WIN32 GetLastError()
                 
         dwOffset += sizeof(DWORD) * 2
-        #~ echo "offseting",sizeof(DWORD)
 
         if dwChunkType == fourcc:
             dwChunkSize = dwChunkDataSize
             dwChunkDataPosition = dwOffset
-            #~ echo "returning",(dwChunkDataSize,dwOffset)
             return S_OK
         dwOffset += dwChunkDataSize;
-        #~ echo "offseting by chunk",(dwChunkDataSize:dwChunkDataSize,bytesRead:bytesRead,dwRIFFDataSize:dwRIFFDataSize)
-
+        
         if bytesRead >= dwRIFFDataSize: return S_FALSE
     return S_OK
+
 
 proc ReadChunkData(hFile:HANDLE, buffer:pointer, buffersize:UINT32, bufferoffset:UINT32): HRESULT = 
     var hr = S_OK
@@ -84,58 +76,110 @@ proc ReadChunkData(hFile:HANDLE, buffer:pointer, buffersize:UINT32, bufferoffset
     if 0 == ReadFile( hFile, buffer, buffersize.LONG, &dwRead, NULL):
         hr = HRESULT_FROM_WIN32 GetLastError()
     return hr
-    
-var strFileName = "Ensoniq-SQ-1-Open-Hi-Hat.wav"
-var hFile = CreateFile(strFileName,GENERIC_READ,FILE_SHARE_READ,nil,OPEN_EXISTING,0,nil)
 
-if INVALID_HANDLE_VALUE == hFile:
-    echo HRESULT_FROM_WIN32 GetLastError()
 
-if INVALID_SET_FILE_POINTER == SetFilePointer( hFile, 0, nil, FILE_BEGIN ):
-    echo HRESULT_FROM_WIN32 GetLastError()
+proc loadAudioData(filename="Ensoniq-SQ-1-Open-Hi-Hat.wav"): (XAUDIO2_BUFFER,WAVEFORMATEXTENSIBLE) =
+    var hFile = CreateFile(filename,GENERIC_READ,FILE_SHARE_READ,nil,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,nil)
+
+    if INVALID_HANDLE_VALUE == hFile:
+        echo HRESULT_FROM_WIN32 GetLastError()
+        return
+
+    if INVALID_SET_FILE_POINTER == SetFilePointer( hFile, 0, nil, FILE_BEGIN ):
+        echo HRESULT_FROM_WIN32 GetLastError()
+        return
+        
+    var filetype: UINT32
+    var wfx: WAVEFORMATEXTENSIBLE
+    var dwChunkSize, dwChunkPosition: UINT32
+    #check the file type, should be 'WAVE' or 'XWMA'
+    #Locate the 'RIFF' chunk in file
+    hr = FindChunk(hFile, fourccRIFF, dwChunkSize, dwChunkPosition)
+    if hr!=S_OK: echo "FindChunk error fourccRIFF ",hr.toHex
+    hr = ReadChunkData(hFile, &filetype, UINT32 sizeof(DWORD), dwChunkPosition)
+    if hr!=S_OK: echo "ReadChunkData error ",hr.toHex
+    if filetype != fourccWAVE:
+        echo "file is not WAVE format ",(filetype:filetype)
+        CloseHandle(hFile)
+        return
     
-var wfx: WAVEFORMATEXTENSIBLE
-var dwChunkSize, dwChunkPosition: UINT32
-#check the file type, should be 'WAVE' or 'XWMA'
-#Locate the 'RIFF' chunk in file
-hr = FindChunk(hFile, fourccRIFF, dwChunkSize, dwChunkPosition)
-if hr!=S_OK: echo "FindChunk error ",hr.toHex
-echo "RIFF multi character constant ",(dwChunkSize:dwChunkSize, dwChunkPosition:dwChunkPosition)
-var filetype: UINT32
-hr = ReadChunkData(hFile,&filetype,UINT32 sizeof(DWORD),dwChunkPosition)
-if hr!=S_OK: echo "ReadChunkData error ",hr.toHex
-echo (filetype:filetype,fourccWAVE:fourccWAVE)
-if filetype != fourccWAVE: echo "file is not WAVE format"
-#Locate the 'fmt ' chunk, and copy its contents into a WAVEFORMATEXTENSIBLE
-hr = FindChunk(hFile,fourccFMT, dwChunkSize, dwChunkPosition)
-if hr!=S_OK: echo "FindChunk error ",hr.toHex
-hr = ReadChunkData(hFile, &wfx, dwChunkSize, dwChunkPosition)
-if hr!=S_OK: echo "ReadChunkData error ",hr.toHex
-#Locate the 'data' chunk, and read its contents into a buffer.
-hr = FindChunk(hFile,fourccDATA,dwChunkSize, dwChunkPosition)
-if hr!=S_OK: echo "FindChunk error ",hr.toHex
-var dataBuffer = newSeq[BYTE](dwChunkSize)
-hr = ReadChunkData(hFile, addr dataBuffer[0], dwChunkSize, dwChunkPosition)
-if hr!=S_OK: echo "ReadChunkData error ",hr.toHex
-#Populate XAudio2 buffer structure
-var buffer: XAUDIO2_BUFFER
-buffer.AudioBytes = dwChunkSize;  #size of the audio buffer in bytes
-buffer.pAudioData = addr dataBuffer[0]  #buffer containing audio data
-buffer.Flags = XAUDIO2_END_OF_STREAM # tell the source voice not to expect any data after this buffer
+    #Locate the 'fmt ' chunk (and copy its contents into a WAVEFORMATEXTENSIBLE)
+    hr = FindChunk(hFile,fourccFMT, dwChunkSize, dwChunkPosition)
+    if hr!=S_OK: echo "FindChunk error fourccFMT ",hr.toHex
+    hr = ReadChunkData(hFile, &wfx, dwChunkSize, dwChunkPosition)
+    if hr!=S_OK: echo "ReadChunkData error ",hr.toHex
+    
+    #Locate the 'data' chunk (and read its contents into a buffer)
+    hr = FindChunk(hFile,fourccDATA,dwChunkSize, dwChunkPosition)
+    if hr!=S_OK: echo "FindChunk error fourccDATA ",hr.toHex
+    var dataBuffer = newSeq[BYTE](dwChunkSize)
+    hr = ReadChunkData(hFile, addr dataBuffer[0], dwChunkSize, dwChunkPosition)
+    if hr!=S_OK: echo "ReadChunkData error ",hr.toHex
+    
+    #Populate XAudio2 buffer structure
+    var buffer: XAUDIO2_BUFFER
+    buffer.AudioBytes = dwChunkSize;  #size of the audio buffer in bytes
+    buffer.pAudioData = addr dataBuffer[0]  #buffer containing audio data
+    buffer.Flags = XAUDIO2_END_OF_STREAM # tell the source voice not to expect any data after this buffer
+    return (buffer,wfx)
 
 
 #Play audio file
+#~ let (buffer, waveFormat) = loadAudioData()
+#~ var pSourceVoice:ptr IXAudio2SourceVoice
+#~ hr = pXAudio2.lpVtbl.CreateSourceVoice(pXAudio2, &pSourceVoice, cast[ptr WAVEFORMATEX](&waveFormat))
+#~ if hr!=S_OK: echo "CreateSourceVoice error ",hr.toHex
+#~ hr = pSourceVoice.lpVtbl.SubmitSourceBuffer(pSourceVoice, &buffer)
+#~ if hr!=S_OK: echo "SubmitSourceBuffer error ",hr.toHex
+#~ hr = pSourceVoice.lpVtbl.Start(pSourceVoice, 0)
+#~ if hr!=S_OK: echo "Start error ",hr.toHex
+
+#~ start_window()
+
+
+#TESTING WITH CALLBACKS
+var audioBusy = false
+
+proc OnVoiceProcessingPassStart(This:ptr IXAudio2VoiceCallback, BytesRequired:UINT32){.stdcall.}=discard
+proc OnVoiceProcessingPassEnd(This:ptr IXAudio2VoiceCallback){.stdcall.}=discard
+proc OnStreamEnd(This:ptr IXAudio2VoiceCallback){.stdcall.}=discard
+proc OnBufferStart(This:ptr IXAudio2VoiceCallback, pBufferContext:pointer){.stdcall.}=discard
+proc OnBufferEnd(This:ptr IXAudio2VoiceCallback, pBufferContext:pointer){.stdcall.} = audioBusy = false; echo "end callback"
+proc OnLoopEnd(This:ptr IXAudio2VoiceCallback, pBufferContext:pointer){.stdcall.}=discard
+proc OnVoiceError(This:ptr IXAudio2VoiceCallback, pBuffercontext:pointer, Error:HRESULT){.stdcall.}=discard
+
+proc playSound(xaudioSourceVoice:ptr IXAudio2SourceVoice, xaudioBuffer:XAUDIO2_BUFFER) =
+    if not audioBusy:
+        var hr = xaudioSourceVoice.lpVtbl.SubmitSourceBuffer(xaudioSourceVoice, &xaudioBuffer, NULL)
+        if hr!=S_OK: echo "SubmitSourceBuffer error ",hr.toHex
+        audioBusy = true
+
+var audioCallbackVtbl = IXAudio2VoiceCallbackVtbl(
+                        OnStreamEnd : OnStreamEnd,
+                        OnVoiceProcessingPassEnd : OnVoiceProcessingPassEnd,
+                        OnVoiceProcessingPassStart : OnVoiceProcessingPassStart,
+                        OnBufferEnd : OnBufferEnd,
+                        OnBufferStart : OnBufferStart,
+                        OnLoopEnd : OnLoopEnd,
+                        OnVoiceError : OnVoiceError)
+var audioCallback = IXAudio2VoiceCallback(lpVtbl: addr audioCallbackVtbl)
+
+#Play audio file
+let (buffer, waveFormat) = loadAudioData()
 var pSourceVoice:ptr IXAudio2SourceVoice
-hr = pXAudio2.lpVtbl.CreateSourceVoice(pXAudio2, &pSourceVoice, cast[ptr WAVEFORMATEX](&wfx))
+hr = pXAudio2.lpVtbl.CreateSourceVoice(pXAudio2, &pSourceVoice, cast[ptr WAVEFORMATEX](&waveFormat), 0, XAUDIO2_DEFAULT_FREQ_RATIO, addr audioCallback)
 if hr!=S_OK: echo "CreateSourceVoice error ",hr.toHex
 hr = pSourceVoice.lpVtbl.SubmitSourceBuffer(pSourceVoice, &buffer)
 if hr!=S_OK: echo "SubmitSourceBuffer error ",hr.toHex
 hr = pSourceVoice.lpVtbl.Start(pSourceVoice, 0)
 if hr!=S_OK: echo "Start error ",hr.toHex
 
-
+#press a key to play a sound
+keydown = proc(hwnd:HWND) = 
+    echo "keydown ",(audioBusy:audioBusy)
+    pSourceVoice.playSound(buffer)
+    
 start_window()
-
 
 #test for generating audio (not finished)
 #~ var format:WAVEFORMATEX

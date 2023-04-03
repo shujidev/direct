@@ -1,6 +1,7 @@
 import winim/lean
 
 var draw*:proc(hwnd:HWND)
+var keydown*:proc(hwnd:HWND)
 
 proc WndProc(hwnd: HWND, message: int32, wp: WPARAM, lp: LPARAM): LRESULT {.stdcall.} =
     var
@@ -9,6 +10,8 @@ proc WndProc(hwnd: HWND, message: int32, wp: WPARAM, lp: LPARAM): LRESULT {.stdc
         ps: PAINTSTRUCT
         hdcr: HDC
     case message:
+    of WM_LBUTTONDOWN, WM_KEYDOWN:
+        if keydown!=nil: keydown(hwnd)
     of WM_SIZE:
         var width = LOWORD(lp)
         var height = HIWORD(lp)
