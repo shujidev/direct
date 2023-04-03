@@ -8,7 +8,7 @@ import direct/xaudio2
 #Initialization
 var pXAudio2: ptr IXAudio2
 var pMaster: ptr IXAudio2MasteringVoice
-var hr = XAudio2Create(addr pXAudio2, flags=0, XAUDIO2_PROCESSOR XAUDIO2_DEFAULT_PROCESSOR)
+var hr = XAudio2Create(addr pXAudio2, flags=0, XAUDIO2_ANY_PROCESSOR)
 if hr!=S_OK: echo "XAudio2Create error ", hr.toHex
 
 var perf:XAUDIO2_PERFORMANCE_DATA
