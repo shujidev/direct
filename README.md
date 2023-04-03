@@ -9,7 +9,7 @@ nimble install https://github.com/shujidev/direct
 ```
 
 ### Missing parts:
-Currently functions have to be called like this example for compatibility with the C backend
+Currently functions have to be called like this example for compatibility with C
 ```nim
 renderTarget.lpVtbl.BeginDraw(renderTarget)
 ```
