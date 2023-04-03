@@ -140,6 +140,12 @@ proc loadAudioData(filename="Ensoniq-SQ-1-Open-Hi-Hat.wav"): (XAUDIO2_BUFFER,WAV
 #TESTING WITH CALLBACKS
 var audioBusy = false
 
+proc playSound(xaudioSourceVoice:ptr IXAudio2SourceVoice, xaudioBuffer:XAUDIO2_BUFFER) =
+    if not audioBusy:
+        var hr = xaudioSourceVoice.lpVtbl.SubmitSourceBuffer(xaudioSourceVoice, &xaudioBuffer, NULL)
+        if hr!=S_OK: echo "SubmitSourceBuffer error ",hr.toHex
+        audioBusy = true
+
 proc OnVoiceProcessingPassStart(This:ptr IXAudio2VoiceCallback, BytesRequired:UINT32){.stdcall.}=discard
 proc OnVoiceProcessingPassEnd(This:ptr IXAudio2VoiceCallback){.stdcall.}=discard
 proc OnStreamEnd(This:ptr IXAudio2VoiceCallback){.stdcall.}=discard
@@ -147,12 +153,6 @@ proc OnBufferStart(This:ptr IXAudio2VoiceCallback, pBufferContext:pointer){.stdc
 proc OnBufferEnd(This:ptr IXAudio2VoiceCallback, pBufferContext:pointer){.stdcall.} = audioBusy = false; echo "end callback"
 proc OnLoopEnd(This:ptr IXAudio2VoiceCallback, pBufferContext:pointer){.stdcall.}=discard
 proc OnVoiceError(This:ptr IXAudio2VoiceCallback, pBuffercontext:pointer, Error:HRESULT){.stdcall.}=discard
-
-proc playSound(xaudioSourceVoice:ptr IXAudio2SourceVoice, xaudioBuffer:XAUDIO2_BUFFER) =
-    if not audioBusy:
-        var hr = xaudioSourceVoice.lpVtbl.SubmitSourceBuffer(xaudioSourceVoice, &xaudioBuffer, NULL)
-        if hr!=S_OK: echo "SubmitSourceBuffer error ",hr.toHex
-        audioBusy = true
 
 var audioCallbackVtbl = IXAudio2VoiceCallbackVtbl(
                         OnStreamEnd : OnStreamEnd,
@@ -174,7 +174,7 @@ if hr!=S_OK: echo "SubmitSourceBuffer error ",hr.toHex
 hr = pSourceVoice.lpVtbl.Start(pSourceVoice, 0)
 if hr!=S_OK: echo "Start error ",hr.toHex
 
-#press a key to play a sound
+#press a key to play a sound when audio is not busy
 keydown = proc(hwnd:HWND) = 
     echo "keydown ",(audioBusy:audioBusy)
     pSourceVoice.playSound(buffer)
