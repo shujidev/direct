@@ -79,7 +79,7 @@ var soundData: array[BUFFER_LENGTH, int16]
 proc FillAndSubmit(startIndex, count:int) =
     #~ echo (angleIncrement, angleIncrement.toHex, cast[uint16](angleIncrement), (angleIncrement and 0xff0000) shr 0x10)
     for i in startIndex..<startIndex + count:
-        echo (i:i)
+        #~ echo (i:i)
         soundData[i] = int16 angle div WAVEFORM_LENGTH - 32768
         angle = (angle + angleIncrement) mod (WAVEFORM_LENGTH * 65536)
 

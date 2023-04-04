@@ -50,7 +50,9 @@ proc create_window*() =
     if hwnd==0: quit("failed to make hwnd")
     if init!=nil: init(hwnd)
 
+
 proc start_window*() =
+    create_window()
     discard ShowWindow(hwnd, 10)
     discard UpdateWindow(hwnd)
     var message: MSG
