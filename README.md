@@ -26,7 +26,8 @@ converter toDXGIDevice*(x:ptr IDXGIDevice2):ptr IDXGIDevice = cast[ptr IDXGIDevi
 
 
 ### Create functions
-An object can be created with factories, this pattern can be helpful to create self destructing objects, I suppose this could also be made with com pointers (smart pointers with com destructors) as mentioned here: https://learn.microsoft.com/en-us/windows/win32/xaudio2/how-to--play-a-sound-with-xaudio2
+In this example an object like smart pointer is used to free resources automatically, I suppose this could also be made with com pointers (smart pointers with com destructors) as mentioned here: https://learn.microsoft.com/en-us/windows/win32/xaudio2/how-to--play-a-sound-with-xaudio2, I am not sure if winim has that implementation
+
 ```nim
 type RenderTarget* = object
     p:ptr ID2D1RenderTarget
