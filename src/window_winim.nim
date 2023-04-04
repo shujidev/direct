@@ -24,7 +24,8 @@ proc WndProc(hwnd: HWND, message: int32, wp: WPARAM, lp: LPARAM): LRESULT {.stdc
         return DefWindowProc(hwnd, message, wp, lp)
     return 0.LRESULT
 
-proc start_window*() =
+var hwnd*:HWND
+proc create_window*() =
     var wcex: WNDCLASSEX
     wcex.cbSize = sizeof(WNDCLASSEX).int32
     wcex.lpfnWndProc = WndProc
@@ -34,7 +35,7 @@ proc start_window*() =
     wcex.hinstance = GetModuleHandle(nil)
     wcex.hIcon = LoadIcon(0, IDI_APPLICATION)
     wcex.hCursor = LoadCursor(0, IDC_ARROW)
-    #~ wcex.hbrBackground = cast[HBRUSH](COLOR_WINDOW+1)
+    #wcex.hbrBackground = cast[HBRUSH](COLOR_WINDOW+1)
     wcex.hbrBackground = 0
     wcex.lpszMenuName = nil
     wcex.lpszClassName = "Window"
@@ -43,13 +44,13 @@ proc start_window*() =
     if class == 0:
         quit("could not create win class " & $GetLastError())
 
-    var hwnd: HWND
     hwnd = CreateWindow("Window", "Window", WS_OVERLAPPEDWINDOW,
                         CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, 0,
                         0, GetModuleHandle(nil), nil)
     if hwnd==0: quit("failed to make hwnd")
     if init!=nil: init(hwnd)
 
+proc start_window*() =
     discard ShowWindow(hwnd, 10)
     discard UpdateWindow(hwnd)
     var message: MSG

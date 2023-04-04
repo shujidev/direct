@@ -2,7 +2,7 @@ import window_winim
 import winim/lean, winim/com
 if CoInitializeEx(nil, COINIT_MULTITHREADED)!=S_OK: echo "CoInitializeEx error "
 
-import direct/[d3d11,d3d11_1,d3dcommon,dxgi1_2,dxgi,dxgiformat,d3dcompiler]
+import direct/[d3d11,d3d11_1,d3dcommon,dxgi1_2,dxgi,dxgiformat,d3dcompiler,d3d11sdklayers]
 import math
 
 
@@ -21,91 +21,100 @@ proc CreateD3D11Device*(): auto =
             D3D_FEATURE_LEVEL_9_3,
             D3D_FEATURE_LEVEL_9_2,
             D3D_FEATURE_LEVEL_9_1]
-        var creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT.cint
+        var creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT
+        var featureLevel: D3D_FEATURE_LEVEL
         #if defined(DEBUG_BUILD)
         #~ creationFlags = creationFlags or D3D11_CREATE_DEVICE_DEBUG.cint
         #endif
 
         var hResult = D3D11CreateDevice(nil, D3D_DRIVER_TYPE_HARDWARE, 
-                                            0, creationFlags, 
-                                            &featureLevels[0], UINT len(featureLevels), 
-                                            D3D11_SDK_VERSION, &baseDevice, 
-                                            nil, &baseDeviceContext);
+                                            0, UINT creationFlags, 
+                                            addr featureLevels[0],
+                                            UINT len(featureLevels), 
+                                            D3D11_SDK_VERSION,
+                                            addr baseDevice, 
+                                            addr featureLevel,
+                                            addr baseDeviceContext);
         if FAILED(hResult):
             MessageBoxA(0, "D3D11CreateDevice() failed", "Fatal Error", MB_OK)
             quit GetLastError()
+        echo (featureLevel:featureLevel)
             
         # Get 1.1 interface of D3D11 Device and Context
-        hResult = baseDevice.lpVtbl.QueryInterface(baseDevice, &IID_ID3D11Device1, cast[ptr pointer](&d3d11Device))
+        hResult = baseDevice.lpVtbl.QueryInterface(baseDevice, &IID_ID3D11Device1, cast[ptr pointer](addr d3d11Device))
         assert(SUCCEEDED(hResult));
         discard baseDevice.lpVtbl.Release(baseDevice);
-        hResult = baseDeviceContext.lpVtbl.QueryInterface(baseDeviceContext, &IID_ID3D11DeviceContext1, cast[ptr pointer](&d3d11DeviceContext));
+        hResult = baseDeviceContext.lpVtbl.QueryInterface(baseDeviceContext, &IID_ID3D11DeviceContext1, cast[ptr pointer](addr d3d11DeviceContext));
         assert(SUCCEEDED(hResult));
         discard baseDeviceContext.lpVtbl.Release(baseDeviceContext)
         
     return (d3d11Device, d3d11DeviceContext)
 
-
-#~ import direct/d3d11sdklayers
-#ifdef DEBUG_BUILD
-# Set up debug layer to break on D3D11 errors
-#~ var d3dDebug:ptr ID3D11Debug
-#~ d3d11Device.lpVtbl.QueryInterface(d3d11Device, IID_ID3D11Debug, &d3dDebug);
-#~ if d3dDebug:
-    #~ var d3dInfoQueue:ptr ID3D11InfoQueue
-    #~ if SUCCEEDED(d3dDebug.lpVtbl.QueryInterface(d3dDebug, IID_ID3D11InfoQueue, &d3dInfoQueue)):
-        #~ d3dInfoQueue.lpVtbl.SetBreakOnSeverity(d3dInfoQueue, D3D11_MESSAGE_SEVERITY_CORRUPTION, true);
-        #~ d3dInfoQueue.lpVtbl.SetBreakOnSeverity(d3dInfoQueue, D3D11_MESSAGE_SEVERITY_ERROR, true);
-        #~ d3dInfoQueue.lpVtbl.Release(d3dInfoQueue);
-        
-    #~ d3dDebug.lpVtbl.Release(d3dDebug)
-#endif
     
 # Create Swap Chain
-
 proc CreateSwapChain*(d3d11Device:ptr ID3D11Device1, hwnd:HWND):ptr IDXGISwapChain1 =
+    #~ import direct/d3d11sdklayers
+    #ifdef DEBUG_BUILD
+    # Set up debug layer to break on D3D11 errors
+    var d3dDebug:ptr ID3D11Debug
+    var hResult = d3d11Device.lpVtbl.QueryInterface(d3d11Device, &IID_ID3D11Debug, cast[ptr pointer](addr d3dDebug));
+    assert(SUCCEEDED(hResult));
+    if d3dDebug!=nil:
+        var d3dInfoQueue:ptr ID3D11InfoQueue
+        if SUCCEEDED(d3dDebug.lpVtbl.QueryInterface(d3dDebug, &IID_ID3D11InfoQueue, cast[ptr pointer](addr d3dInfoQueue))):
+            hResult = d3dInfoQueue.lpVtbl.SetBreakOnSeverity(d3dInfoQueue, D3D11_MESSAGE_SEVERITY_CORRUPTION, true);
+            hResult = d3dInfoQueue.lpVtbl.SetBreakOnSeverity(d3dInfoQueue, D3D11_MESSAGE_SEVERITY_ERROR, true);
+            discard d3dInfoQueue.lpVtbl.Release(d3dInfoQueue);
+            
+        discard d3dDebug.lpVtbl.Release(d3dDebug)
+    #endif
+
+
     var d3d11SwapChain:ptr IDXGISwapChain1
     block:
         # Get DXGI Factory (needed to create Swap Chain)
         var dxgiFactory:ptr IDXGIFactory2
         block:
             var dxgiDevice:ptr IDXGIDevice1
-            var hResult = d3d11Device.lpVtbl.QueryInterface(d3d11Device, &IID_IDXGIDevice1, cast[ptr pointer](&dxgiDevice));
+            var hResult = d3d11Device.lpVtbl.QueryInterface(d3d11Device, &IID_IDXGIDevice1, cast[ptr pointer](addr dxgiDevice));
             assert(SUCCEEDED(hResult));
 
             var dxgiAdapter:ptr IDXGIAdapter
-            hResult = dxgiDevice.lpVtbl.GetAdapter(dxgiDevice, &dxgiAdapter);
+            hResult = dxgiDevice.lpVtbl.GetAdapter(dxgiDevice, addr dxgiAdapter);
             assert(SUCCEEDED(hResult));
             discard dxgiDevice.lpVtbl.Release(dxgiDevice);
 
             var adapterDesc:DXGI_ADAPTER_DESC
-            hResult = dxgiAdapter.lpVtbl.GetDesc(dxgiAdapter, &adapterDesc);
+            hResult = dxgiAdapter.lpVtbl.GetDesc(dxgiAdapter, addr adapterDesc);
+            assert(SUCCEEDED(hResult));
+            echo (adapterDescription: $$adapterDesc.Description)
+
+            #~ OutputDebugStringA("Graphics Device: ");
+            #~ OutputDebugStringW($adapterDesc.Description);
+
+            hResult = dxgiAdapter.lpVtbl.GetParent(dxgiAdapter, &IID_IDXGIFactory2, cast[ptr pointer](addr dxgiFactory));
+            assert(SUCCEEDED(hResult));
+            discard dxgiAdapter.lpVtbl.Release(dxgiAdapter)
+
+            var d3d11SwapChainDesc:DXGI_SWAP_CHAIN_DESC1
+            #~ d3d11SwapChainDesc.Width = 0; # use window width
+            #~ d3d11SwapChainDesc.Height = 0; # use window height
+            d3d11SwapChainDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+            #~ d3d11SwapChainDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
+            d3d11SwapChainDesc.SampleDesc.Count = 1;
+            d3d11SwapChainDesc.SampleDesc.Quality = 0;
+            d3d11SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+            d3d11SwapChainDesc.BufferCount = 2;
+            d3d11SwapChainDesc.Scaling = DXGI_SCALING_STRETCH;
+            d3d11SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+            d3d11SwapChainDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
+            #~ d3d11SwapChainDesc.AlphaMode = DXGI_ALPHA_MODE_PREMULTIPLIED
+            #~ d3d11SwapChainDesc.Flags = 0;
+
+            hResult = dxgiFactory.lpVtbl.CreateSwapChainForHwnd(dxgiFactory, d3d11device, hwnd, addr d3d11SwapChainDesc, nil, nil, addr d3d11SwapChain);
             assert(SUCCEEDED(hResult));
 
-            OutputDebugStringA("Graphics Device: ");
-            OutputDebugStringW($adapterDesc.Description);
-
-            hResult = dxgiAdapter.lpVtbl.GetParent(dxgiAdapter, &IID_IDXGIFactory2, cast[ptr pointer](&dxgiFactory));
-            assert(SUCCEEDED(hResult));
-            discard dxgiAdapter.lpVtbl.Release(dxgiAdapter);
-
-        var d3d11SwapChainDesc:DXGI_SWAP_CHAIN_DESC1
-        d3d11SwapChainDesc.Width = 0; # use window width
-        d3d11SwapChainDesc.Height = 0; # use window height
-        d3d11SwapChainDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
-        d3d11SwapChainDesc.SampleDesc.Count = 1;
-        d3d11SwapChainDesc.SampleDesc.Quality = 0;
-        d3d11SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-        d3d11SwapChainDesc.BufferCount = 2;
-        d3d11SwapChainDesc.Scaling = DXGI_SCALING_STRETCH;
-        d3d11SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-        d3d11SwapChainDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
-        d3d11SwapChainDesc.Flags = 0;
-
-        var hResult = dxgiFactory.lpVtbl.CreateSwapChainForHwnd(dxgiFactory, d3d11Device, hwnd, &d3d11SwapChainDesc, nil, nil, &d3d11SwapChain);
-        assert(SUCCEEDED(hResult));
-
-        discard dxgiFactory.lpVtbl.Release(dxgiFactory)
+        #~ discard dxgiFactory.lpVtbl.Release(dxgiFactory)
     return d3d11SwapChain
 
 # Create Framebuffer Render Target
@@ -119,6 +128,7 @@ proc CreateFrameBuffer(d3d11Device:ptr ID3D11Device1, d3d11SwapChain:ptr IDXGISw
         hResult = d3d11Device.lpVtbl.CreateRenderTargetView(d3d11Device, cast[ptr ID3D11Resource](d3d11FrameBuffer), nil, &d3d11FrameBufferView);
         assert(SUCCEEDED(hResult));
         discard d3d11FrameBuffer.lpVtbl.Release(d3d11FrameBuffer);
+    return d3d11FrameBufferView
 
 # Create Vertex Shader
 proc CreateVertexShader(d3d11Device:ptr ID3D11Device1): (ptr ID3DBlob, ptr ID3D11VertexShader) = 
@@ -180,7 +190,7 @@ proc CreateInputLayout(d3d11Device:ptr ID3D11Device1, vsBlob:ptr ID3DBlob):ptr I
     return inputLayout
 
 # Create Vertex Buffer
-proc CreateVertexBuffer(d3d11Device:ptr ID3D11Device1):ptr ID3D11Buffer =
+proc CreateVertexBuffer(d3d11Device:ptr ID3D11Device1):auto =
     var vertexBuffer:ptr ID3D11Buffer
     var numVerts,stride,offset:UINT
     block:
@@ -205,7 +215,7 @@ proc CreateVertexBuffer(d3d11Device:ptr ID3D11Device1):ptr ID3D11Buffer =
 
         var hResult = d3d11Device.lpVtbl.CreateBuffer(d3d11Device, &vertexBufferDesc, &vertexSubresourceData, &vertexBuffer);
         assert(SUCCEEDED(hResult))
-    return vertexBuffer
+    return (vertexBuffer,numVerts,stride,offset)
 
 # Create Sampler State
 proc CreateSamplerState(d3d11Device:ptr ID3D11Device1):ptr ID3D11SamplerState =
@@ -225,36 +235,39 @@ proc CreateSamplerState(d3d11Device:ptr ID3D11Device1):ptr ID3D11SamplerState =
     assert(SUCCEEDED(hResult))
     return samplerState
 
+import stb_image/read as stbi
 proc CreateTextureView(d3d11Device:ptr ID3D11Device1):ptr ID3D11ShaderResourceView =
     # Load Image
-    var texWidth, texHeight, texNumChannels:int32
+    var texWidth, texHeight, texNumChannels:int
     var texForceNumChannels = 4'i32
-    var testTextureBytes = stbi_load("testTexture.png", &texWidth, &texHeight, &texNumChannels, texForceNumChannels); #char pointer
-    assert(testTextureBytes);
+    var testTextureBytes = stbi.load("testTexture.png", texWidth, texHeight, texNumChannels, texForceNumChannels); #char pointer
+    #~ assert(testTextureBytes);
     var texBytesPerRow = 4 * texWidth;
 
     # Create Texture
     var textureDesc: D3D11_TEXTURE2D_DESC
-    textureDesc.Width              = texWidth;
-    textureDesc.Height             = texHeight;
+    textureDesc.Width              = UINT texWidth;
+    textureDesc.Height             = UINT texHeight;
     textureDesc.MipLevels          = 1;
     textureDesc.ArraySize          = 1;
     textureDesc.Format             = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
     textureDesc.SampleDesc.Count   = 1;
     textureDesc.Usage              = D3D11_USAGE_IMMUTABLE;
-    textureDesc.BindFlags          = D3D11_BIND_SHADER_RESOURCE;
+    textureDesc.BindFlags          = UINT D3D11_BIND_SHADER_RESOURCE;
 
     var textureSubresourceData:D3D11_SUBRESOURCE_DATA
-    textureSubresourceData.pSysMem = testTextureBytes;
-    textureSubresourceData.SysMemPitch = texBytesPerRow;
+    textureSubresourceData.pSysMem = &testTextureBytes
+    textureSubresourceData.SysMemPitch = UINT texBytesPerRow
 
     var texture:ptr ID3D11Texture2D
-    d3d11Device.lpVtbl.CreateTexture2D(d3d11Device, &textureDesc, &textureSubresourceData, &texture);
+    var hResult = d3d11Device.lpVtbl.CreateTexture2D(d3d11Device, &textureDesc, &textureSubresourceData, &texture);
+    assert(SUCCEEDED(hResult))
 
     var textureView:ptr ID3D11ShaderResourceView
-    d3d11Device.lpVtbl.CreateShaderResourceView(d3d11Device, texture, nil, &textureView);
+    hResult = d3d11Device.lpVtbl.CreateShaderResourceView(d3d11Device, cast[ptr ID3D11Resource](texture), nil, &textureView);
+    assert(SUCCEEDED(hResult))
 
-    free(testTextureBytes);
+    #~ stbi.free(testTextureBytes); #no need in Nim
     return textureView
 
 
@@ -263,46 +276,59 @@ var d3d11DeviceContext*:ptr ID3D11DeviceContext1
 #~ var dxgiDevice*: ptr IDXGIDevice1
 #~ var d2context*: ptr ID2D1DeviceContext
 #~ var ct*: ptr ID2D1DeviceContext
-var swapChain*: ptr IDXGISwapChain1
+var d3d11SwapChain*: ptr IDXGISwapChain1
 #~ var backbuffer*: ptr ID2D1Bitmap1
 #~ var offscreenBuffer*: ptr ID2D1Bitmap1
+var d3d11FrameBufferView:ptr ID3D11RenderTargetView
 init = proc(hwnd:HWND)=
     echo "init" #should be created after creating window but before showing
     (d3d11Device, d3d11DeviceContext) = CreateD3D11Device()
-    swapChain = CreateSwapChain(d3d11Device, hwnd)
+    d3d11SwapChain = CreateSwapChain(d3d11Device, hwnd)
     #~ d2context = CreateD2DContext(dxgiDevice)
     #~ backbuffer = CreateBackBufferBitmap(d2context, swapChain)
     #~ offscreenBuffer = CreateTargetBitmap(d2context, backbuffer.getPixelSize())
     #~ d2context.setAntialiasMode(D2D1_ANTIALIAS_MODE_ALIASED)
     #~ d2context.setAntialiasMode(D2D1_ANTIALIAS_MODE_PER_PRIMITIVE)
     #~ ct = d2context #short alias
+    d3d11FrameBufferView = CreateFrameBuffer(d3d11Device, d3d11SwapChain)
     
-
+    
+    
 draw = proc(hwnd:HWND) = 
+    #~ var (vsBlob, vertexShader) = CreateVertexShader(d3d11Device)
+    #~ var pixelShader = CreatePixelShader(d3d11Device)
+    #~ var inputLayout=CreateInputLayout(d3d11Device, vsBlob)
+    #~ var (vertexBuffer,numVerts,stride,offset) = CreateVertexBuffer(d3d11Device)
+    #~ var samplerState = CreateSamplerState(d3d11Device)
+    #~ var textureView = CreateTextureView(d3d11Device) #returns ID3D11ShaderResourceView
     
-    var backgroundColor = [ 0.1f, 0.2f, 0.6f, 1.0f]
-    d3d11DeviceContext.lpVtbl.ClearRenderTargetView(d3d11DeviceContext, d3d11FrameBufferView, backgroundColor);
+    #~ var backgroundColor = [ 0.1f, 0.2f, 0.6f, 1.0f]
+    #~ d3d11DeviceContext.lpVtbl.ClearRenderTargetView(d3d11DeviceContext, d3d11FrameBufferView, backgroundColor);
 
-    var winRect:RECT
-    GetClientRect(hwnd, &winRect);
-    var viewport = D3D11_VIEWPORT(0.0f, 0.0f, FLOAT(winRect.right - winRect.left), FLOAT(winRect.bottom - winRect.top), 0.0f, 1.0f)
-    d3d11DeviceContext.lpVtbl.RSSetViewports(d3d11DeviceContext, 1, &viewport);
+    #~ var winRect:RECT
+    #~ GetClientRect(hwnd, &winRect);
+    #~ var viewport = D3D11_VIEWPORT(TopLeftX:0f, TopLeftY:0f, Width:FLOAT(winRect.right - winRect.left), Height:FLOAT(winRect.bottom - winRect.top), MinDepth:0f, MaxDepth:1f)
+    #~ d3d11DeviceContext.lpVtbl.RSSetViewports(d3d11DeviceContext, 1, &viewport);
 
-    d3d11DeviceContext.lpVtbl.OMSetRenderTargets(d3d11DeviceContext, 1, &d3d11FrameBufferView, nil);
+    #~ d3d11DeviceContext.lpVtbl.OMSetRenderTargets(d3d11DeviceContext, 1, &d3d11FrameBufferView, nil);
 
-    d3d11DeviceContext.lpVtbl.IASetPrimitiveTopology(d3d11DeviceContext, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    d3d11DeviceContext.lpVtbl.IASetInputLayout(d3d11DeviceContext, inputLayout);
+    #~ d3d11DeviceContext.lpVtbl.IASetPrimitiveTopology(d3d11DeviceContext, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    #~ d3d11DeviceContext.lpVtbl.IASetInputLayout(d3d11DeviceContext, inputLayout);
 
-    d3d11DeviceContext.lpVtbl.VSSetShader(d3d11DeviceContext, vertexShader, nil, 0);
-    d3d11DeviceContext.lpVtbl.PSSetShader(d3d11DeviceContext, pixelShader, nil, 0);
+    #~ d3d11DeviceContext.lpVtbl.VSSetShader(d3d11DeviceContext, vertexShader, nil, 0);
+    #~ d3d11DeviceContext.lpVtbl.PSSetShader(d3d11DeviceContext, pixelShader, nil, 0);
 
-    d3d11DeviceContext.lpVtbl.PSSetShaderResources(d3d11DeviceContext, 0, 1, &textureView);
-    d3d11DeviceContext.lpVtbl.PSSetSamplers(d3d11DeviceContext, 0, 1, &samplerState);
+    #~ d3d11DeviceContext.lpVtbl.PSSetShaderResources(d3d11DeviceContext, 0, 1, addr textureView);
+    #~ d3d11DeviceContext.lpVtbl.PSSetSamplers(d3d11DeviceContext, 0, 1, addr samplerState);
 
-    d3d11DeviceContext.lpVtbl.IASetVertexBuffers(d3d11DeviceContext, 0, 1, &vertexBuffer, &stride, &offset);
+    #~ d3d11DeviceContext.lpVtbl.IASetVertexBuffers(d3d11DeviceContext, 0, 1, addr vertexBuffer, &stride, &offset);
 
-    d3d11DeviceContext.lpVtbl.Draw(d3d11DeviceContext, numVerts, 0);
+    #~ d3d11DeviceContext.lpVtbl.Draw(d3d11DeviceContext, numVerts, 0);
 
-    d3d11SwapChain.lpVtbl.Present(d3d11DeviceContext, 1, 0);
+    #~ var hResult = d3d11SwapChain.lpVtbl.Present(d3d11SwapChain, 1, 0);
+    #~ assert(SUCCEEDED(hResult))
+    discard
 
+create_window()
+#~ init(hwnd)
 start_window()

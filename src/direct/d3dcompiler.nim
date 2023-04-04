@@ -1,4 +1,6 @@
-{.link: "d3dCompiler.lib".}
+#~ {.link: "d3dCompiler.lib".}
+{.passL: "-ld3dcompiler".}
+
 import d3dcommon
 import winim
 type UINT = uint32

@@ -1,6 +1,51 @@
 
 import winim/lean, dxgi, d3dcommon
 import dxgiformat, dxgicommon
+#~ {.link: "libd3dx11.a".}
+{.passL: "-ld3d11".}
+
+const IID_ID3D11DeviceChild* = IID(Data1:0x1841e5c8'i32, Data2:0x16b0, Data3:0x489b, Data4:[0xbc'u8, 0xc8, 0x44, 0xcf, 0xb0, 0xd5, 0xde, 0xae])
+const IID_ID3D11Asynchronous* = IID(Data1:0x4b35d0cd'i32, Data2:0x1e15, Data3:0x4258, Data4:[0x9c'u8, 0x98, 0x1b, 0x13, 0x33, 0xf6, 0xdd, 0x3b])
+const IID_ID3D11Query* = IID(Data1:0xd6c00747'i32, Data2:0x87b7, Data3:0x425e, Data4:[0xb8'u8, 0x4d, 0x44, 0xd1, 0x08, 0x56, 0x0a, 0xfd])
+const IID_ID3D11Resource* = IID(Data1:0xdc8e63f3'i32, Data2:0xd12b, Data3:0x4952, Data4:[0xb4'u8, 0x7b, 0x5e, 0x45, 0x02, 0x6a, 0x86, 0x2d])
+const IID_ID3D11View* = IID(Data1:0x839d1216'i32, Data2:0xbb2e, Data3:0x412b, Data4:[0xb7'u8, 0xf4, 0xa9, 0xdb, 0xeb, 0xe0, 0x8e, 0xd1])
+const IID_ID3D11BlendState* = IID(Data1:0x75b68faa'i32, Data2:0x347d, Data3:0x4159, Data4:[0x8f'u8, 0x45, 0xa0, 0x64, 0x0f, 0x01, 0xcd, 0x9a])
+const IID_ID3D11Buffer* = IID(Data1:0x48570b85'i32, Data2:0xd1ee, Data3:0x4fcd, Data4:[0xa2'u8, 0x50, 0xeb, 0x35, 0x07, 0x22, 0xb0, 0x37])
+const IID_ID3D11ClassInstance* = IID(Data1:0xa6cd7faa'i32, Data2:0xb0b7, Data3:0x4a2f, Data4:[0x94'u8, 0x36, 0x86, 0x62, 0xa6, 0x57, 0x97, 0xcb])
+const IID_ID3D11ClassLinkage* = IID(Data1:0xddf57cba'i32, Data2:0x9543, Data3:0x46e4, Data4:[0xa1'u8, 0x2b, 0xf2, 0x07, 0xa0, 0xfe, 0x7f, 0xed])
+const IID_ID3D11CommandList* = IID(Data1:0xa24bc4d1'i32, Data2:0x769e, Data3:0x43f7, Data4:[0x80'u8, 0x13, 0x98, 0xff, 0x56, 0x6c, 0x18, 0xe2])
+const IID_ID3D11ComputeShader* = IID(Data1:0x4f5b196e'i32, Data2:0xc2bd, Data3:0x495e, Data4:[0xbd'u8, 0x01, 0x1f, 0xde, 0xd3, 0x8e, 0x49, 0x69])
+const IID_ID3D11Counter* = IID(Data1:0x6e8c49fb'i32, Data2:0xa371, Data3:0x4770, Data4:[0xb4'u8, 0x40, 0x29, 0x08, 0x60, 0x22, 0xb7, 0x41])
+const IID_ID3D11DepthStencilState* = IID(Data1:0x03823efb'i32, Data2:0x8d8f, Data3:0x4e1c, Data4:[0x9a'u8, 0xa2, 0xf6, 0x4b, 0xb2, 0xcb, 0xfd, 0xf1])
+const IID_ID3D11DepthStencilView* = IID(Data1:0x9fdac92a'i32, Data2:0x1876, Data3:0x48c3, Data4:[0xaf'u8, 0xad, 0x25, 0xb9, 0x4f, 0x84, 0xa9, 0xb6])
+const IID_ID3D11DomainShader* = IID(Data1:0xf582c508'i32, Data2:0x0f36, Data3:0x490c, Data4:[0x99'u8, 0x77, 0x31, 0xee, 0xce, 0x26, 0x8c, 0xfa])
+const IID_ID3D11GeometryShader* = IID(Data1:0x38325b96'i32, Data2:0xeffb, Data3:0x4022, Data4:[0xba'u8, 0x02, 0x2e, 0x79, 0x5b, 0x70, 0x27, 0x5c])
+const IID_ID3D11HullShader* = IID(Data1:0x8e5c6061'i32, Data2:0x628a, Data3:0x4c8e, Data4:[0x82'u8, 0x64, 0xbb, 0xe4, 0x5c, 0xb3, 0xd5, 0xdd])
+const IID_ID3D11InputLayout* = IID(Data1:0xe4819ddc'i32, Data2:0x4cf0, Data3:0x4025, Data4:[0xbd'u8, 0x26, 0x5d, 0xe8, 0x2a, 0x3e, 0x07, 0xb7])
+const IID_ID3D11PixelShader* = IID(Data1:0xea82e40d'i32, Data2:0x51dc, Data3:0x4f33, Data4:[0x93'u8, 0xd4, 0xdb, 0x7c, 0x91, 0x25, 0xae, 0x8c])
+const IID_ID3D11Predicate* = IID(Data1:0x9eb576dd'i32, Data2:0x9f77, Data3:0x4d86, Data4:[0x81'u8, 0xaa, 0x8b, 0xab, 0x5f, 0xe4, 0x90, 0xe2])
+const IID_ID3D11RasterizerState* = IID(Data1:0x9bb4ab81'i32, Data2:0xab1a, Data3:0x4d8f, Data4:[0xb5'u8, 0x06, 0xfc, 0x04, 0x20, 0x0b, 0x6e, 0xe7])
+const IID_ID3D11RenderTargetView* = IID(Data1:0xdfdba067'i32, Data2:0x0b8d, Data3:0x4865, Data4:[0x87'u8, 0x5b, 0xd7, 0xb4, 0x51, 0x6c, 0xc1, 0x64])
+const IID_ID3D11SamplerState* = IID(Data1:0xda6fea51'i32, Data2:0x564c, Data3:0x4487, Data4:[0x98'u8, 0x10, 0xf0, 0xd0, 0xf9, 0xb4, 0xe3, 0xa5])
+const IID_ID3D11ShaderResourceView* = IID(Data1:0xb0e06fe0'i32, Data2:0x8192, Data3:0x4e1a, Data4:[0xb1'u8, 0xca, 0x36, 0xd7, 0x41, 0x47, 0x10, 0xb2])
+const IID_ID3D11Texture1D* = IID(Data1:0xf8fb5c27'i32, Data2:0xc6b3, Data3:0x4f75, Data4:[0xa4'u8, 0xc8, 0x43, 0x9a, 0xf2, 0xef, 0x56, 0x4c])
+const IID_ID3D11Texture2D* = IID(Data1:0x6f15aaf2'i32, Data2:0xd208, Data3:0x4e89, Data4:[0x9a'u8, 0xb4, 0x48, 0x95, 0x35, 0xd3, 0x4f, 0x9c])
+const IID_ID3D11Texture3D* = IID(Data1:0x037e866e'i32, Data2:0xf56d, Data3:0x4357, Data4:[0xa8'u8, 0xaf, 0x9d, 0xab, 0xbe, 0x6e, 0x25, 0x0e])
+const IID_ID3D11UnorderedAccessView* = IID(Data1:0x28acf509'i32, Data2:0x7f5c, Data3:0x48f6, Data4:[0x86'u8, 0x11, 0xf3, 0x16, 0x01, 0x0a, 0x63, 0x80])
+const IID_ID3D11VertexShader* = IID(Data1:0x3b301d64'i32, Data2:0xd678, Data3:0x4289, Data4:[0x88'u8, 0x97, 0x22, 0xf8, 0x92, 0x8b, 0x72, 0xf3])
+const IID_ID3D11DeviceContext* = IID(Data1:0xc0bfa96c'i32, Data2:0xe089, Data3:0x44fb, Data4:[0x8e'u8, 0xaf, 0x26, 0xf8, 0x79, 0x61, 0x90, 0xda])
+const IID_ID3D11AuthenticatedChannel* = IID(Data1:0x3015a308'i32, Data2:0xdcbd, Data3:0x47aa, Data4:[0xa7'u8, 0x47, 0x19, 0x24, 0x86, 0xd1, 0x4d, 0x4a])
+const IID_ID3D11CryptoSession* = IID(Data1:0x9b32f9ad'i32, Data2:0xbdcc, Data3:0x40a6, Data4:[0xa3'u8, 0x9d, 0xd5, 0xc8, 0x65, 0x84, 0x57, 0x20])
+const IID_ID3D11VideoDecoder* = IID(Data1:0x3c9c5b51'i32, Data2:0x995d, Data3:0x48d1, Data4:[0x9b'u8, 0x8d, 0xfa, 0x5c, 0xae, 0xde, 0xd6, 0x5c])
+const IID_ID3D11VideoProcessorEnumerator* = IID(Data1:0x31627037'i32, Data2:0x53ab, Data3:0x4200, Data4:[0x90'u8, 0x61, 0x05, 0xfa, 0xa9, 0xab, 0x45, 0xf9])
+const IID_ID3D11VideoProcessor* = IID(Data1:0x1d7b0652'i32, Data2:0x185f, Data3:0x41c6, Data4:[0x85'u8, 0xce, 0x0c, 0x5b, 0xe3, 0xd4, 0xae, 0x6c])
+const IID_ID3D11VideoDecoderOutputView* = IID(Data1:0xc2931aea'i32, Data2:0x2a85, Data3:0x4f20, Data4:[0x86'u8, 0x0f, 0xfb, 0xa1, 0xfd, 0x25, 0x6e, 0x18])
+const IID_ID3D11VideoProcessorInputView* = IID(Data1:0x11ec5a5f'i32, Data2:0x51dc, Data3:0x4945, Data4:[0xab'u8, 0x34, 0x6e, 0x8c, 0x21, 0x30, 0x0e, 0xa5])
+const IID_ID3D11VideoProcessorOutputView* = IID(Data1:0xa048285e'i32, Data2:0x25a9, Data3:0x4527, Data4:[0xbd'u8, 0x93, 0xd6, 0x8b, 0x68, 0xc4, 0x42, 0x54])
+const IID_ID3D11VideoDevice* = IID(Data1:0x10ec4d5b'i32, Data2:0x975a, Data3:0x4689, Data4:[0xb9'u8, 0xe4, 0xd0, 0xaa, 0xc3, 0x0f, 0xe3, 0x33])
+const IID_ID3D11VideoContext* = IID(Data1:0x61f21c45'i32, Data2:0x3c0e, Data3:0x4a74, Data4:[0x9c'u8, 0xea, 0x67, 0x10, 0x0d, 0x9a, 0xd5, 0xe4])
+const IID_ID3D11Device* = IID(Data1:0xdb6f6ddb'i32, Data2:0xac77, Data3:0x4e88, Data4:[0x82'u8, 0x53, 0x81, 0x9d, 0xf9, 0xbb, 0xf1, 0x40])
+
 
 const 
   D3D11_16BIT_INDEX_STRIP_CUT_VALUE* = (0x0000FFFF)
@@ -2394,130 +2439,63 @@ type
                               # [annotation] 
     VSSetConstantBuffers*: proc (This: ptr ID3D11DeviceContext; StartSlot: UINT; 
                                  NumBuffers: UINT; 
-                                 ppConstantBuffers: ptr ptr ID3D11Buffer) {.
-        stdcall.}             # [annotation] 
-                              # [annotation] 
-                              # [annotation] 
+                                 ppConstantBuffers: ptr ptr ID3D11Buffer) {.stdcall.}
     PSSetShaderResources*: proc (This: ptr ID3D11DeviceContext; StartSlot: UINT; 
-                                 NumViews: UINT; ppShaderResourceViews: ptr ptr ID3D11ShaderResourceView) {.
-        stdcall.}             # [annotation] 
-                              # [annotation] 
-                              # [annotation] 
+                                 NumViews: UINT; ppShaderResourceViews: ptr ptr ID3D11ShaderResourceView) {.stdcall.}
     PSSetShader*: proc (This: ptr ID3D11DeviceContext; 
                         pPixelShader: ptr ID3D11PixelShader; 
                         ppClassInstances: ptr ptr ID3D11ClassInstance; 
-                        NumClassInstances: UINT) {.stdcall.} # [annotation] 
-                                                             # [annotation] 
+                        NumClassInstances: UINT) {.stdcall.}
     PSSetSamplers*: proc (This: ptr ID3D11DeviceContext; StartSlot: UINT; 
                           NumSamplers: UINT; 
-                          ppSamplers: ptr ptr ID3D11SamplerState) {.stdcall.} # 
-                                                                              # [annotation] 
-                                                                              # 
-                                                                              # [annotation] 
-                                                                              # 
-                                                                              # [annotation] 
+                          ppSamplers: ptr ptr ID3D11SamplerState) {.stdcall.}
     VSSetShader*: proc (This: ptr ID3D11DeviceContext; 
                         pVertexShader: ptr ID3D11VertexShader; 
                         ppClassInstances: ptr ptr ID3D11ClassInstance; 
-                        NumClassInstances: UINT) {.stdcall.} # [annotation] 
-                                                             # [annotation] 
+                        NumClassInstances: UINT) {.stdcall.}
     DrawIndexed*: proc (This: ptr ID3D11DeviceContext; IndexCount: UINT; 
-                        StartIndexLocation: UINT; BaseVertexLocation: INT) {.
-        stdcall.}             # [annotation] 
-                              # [annotation] 
-                              # [annotation] 
+                        StartIndexLocation: UINT; BaseVertexLocation: INT) {.stdcall.} 
     Draw*: proc (This: ptr ID3D11DeviceContext; VertexCount: UINT; 
-                 StartVertexLocation: UINT) {.stdcall.} # [annotation] 
-                                                        # [annotation] 
+                 StartVertexLocation: UINT) {.stdcall.}
     Map*: proc (This: ptr ID3D11DeviceContext; pResource: ptr ID3D11Resource; 
                 Subresource: UINT; MapType: D3D11_MAP; MapFlags: UINT; 
-                pMappedResource: ptr D3D11_MAPPED_SUBRESOURCE): HRESULT {.
-        stdcall.}             # [annotation] 
-                              # [annotation] 
-                              # [annotation] 
-                              # [annotation] 
-                              # [annotation] 
+                pMappedResource: ptr D3D11_MAPPED_SUBRESOURCE): HRESULT {.stdcall.}
     Unmap*: proc (This: ptr ID3D11DeviceContext; pResource: ptr ID3D11Resource; 
-                  Subresource: UINT) {.stdcall.} # [annotation] 
-                                                 # [annotation] 
+                  Subresource: UINT) {.stdcall.}
     PSSetConstantBuffers*: proc (This: ptr ID3D11DeviceContext; StartSlot: UINT; 
                                  NumBuffers: UINT; 
-                                 ppConstantBuffers: ptr ptr ID3D11Buffer) {.
-        stdcall.}             # [annotation] 
-                              # [annotation] 
-                              # [annotation] 
+                                 ppConstantBuffers: ptr ptr ID3D11Buffer) {.stdcall.}
     IASetInputLayout*: proc (This: ptr ID3D11DeviceContext; 
-                             pInputLayout: ptr ID3D11InputLayout) {.stdcall.} # 
-                                                                              # [annotation] 
+                             pInputLayout: ptr ID3D11InputLayout) {.stdcall.}
     IASetVertexBuffers*: proc (This: ptr ID3D11DeviceContext; StartSlot: UINT; 
                                NumBuffers: UINT; 
                                ppVertexBuffers: ptr ptr ID3D11Buffer; 
-                               pStrides: ptr UINT; pOffsets: ptr UINT) {.stdcall.} # 
-                                                                                   # [annotation] 
-                                                                                   # 
-                                                                                   # [annotation] 
-                                                                                   # 
-                                                                                   # [annotation] 
-                                                                                   # 
-                                                                                   # [annotation] 
-                                                                                   # 
-                                                                                   # [annotation] 
+                               pStrides: ptr UINT; pOffsets: ptr UINT) {.stdcall.}
     IASetIndexBuffer*: proc (This: ptr ID3D11DeviceContext; 
                              pIndexBuffer: ptr ID3D11Buffer; 
-                             Format: DXGI_FORMAT; Offset: UINT) {.stdcall.} # 
-                                                                            # [annotation] 
-                                                                            # 
-                                                                            # [annotation] 
-                                                                            # 
-                                                                            # [annotation] 
+                             Format: DXGI_FORMAT; Offset: UINT) {.stdcall.}
     DrawIndexedInstanced*: proc (This: ptr ID3D11DeviceContext; 
                                  IndexCountPerInstance: UINT; 
                                  InstanceCount: UINT; StartIndexLocation: UINT; 
                                  BaseVertexLocation: INT; 
-                                 StartInstanceLocation: UINT) {.stdcall.} # 
-                                                                          # [annotation] 
-                                                                          # 
-                                                                          # [annotation] 
-                                                                          # 
-                                                                          # [annotation] 
-                                                                          # 
-                                                                          # [annotation] 
-                                                                          # 
-                                                                          # [annotation] 
+                                 StartInstanceLocation: UINT) {.stdcall.}
     DrawInstanced*: proc (This: ptr ID3D11DeviceContext; 
                           VertexCountPerInstance: UINT; InstanceCount: UINT; 
-                          StartVertexLocation: UINT; StartInstanceLocation: UINT) {.
-        stdcall.}             # [annotation] 
-                              # [annotation] 
-                              # [annotation] 
-                              # [annotation] 
+                          StartVertexLocation: UINT; StartInstanceLocation: UINT) {.stdcall.}
     GSSetConstantBuffers*: proc (This: ptr ID3D11DeviceContext; StartSlot: UINT; 
                                  NumBuffers: UINT; 
-                                 ppConstantBuffers: ptr ptr ID3D11Buffer) {.
-        stdcall.}             # [annotation] 
-                              # [annotation] 
-                              # [annotation] 
+                                 ppConstantBuffers: ptr ptr ID3D11Buffer) {.stdcall.}
     GSSetShader*: proc (This: ptr ID3D11DeviceContext; 
                         pShader: ptr ID3D11GeometryShader; 
                         ppClassInstances: ptr ptr ID3D11ClassInstance; 
-                        NumClassInstances: UINT) {.stdcall.} # [annotation] 
-                                                             # [annotation] 
+                        NumClassInstances: UINT) {.stdcall.}
     IASetPrimitiveTopology*: proc (This: ptr ID3D11DeviceContext; 
-                                   Topology: D3D11_PRIMITIVE_TOPOLOGY) {.stdcall.} # 
-                                                                                   # [annotation] 
+                                   Topology: D3D11_PRIMITIVE_TOPOLOGY) {.stdcall.}
     VSSetShaderResources*: proc (This: ptr ID3D11DeviceContext; StartSlot: UINT; 
-                                 NumViews: UINT; ppShaderResourceViews: ptr ptr ID3D11ShaderResourceView) {.
-        stdcall.}             # [annotation] 
-                              # [annotation] 
-                              # [annotation] 
+                                 NumViews: UINT; ppShaderResourceViews: ptr ptr ID3D11ShaderResourceView) {.stdcall.}
     VSSetSamplers*: proc (This: ptr ID3D11DeviceContext; StartSlot: UINT; 
                           NumSamplers: UINT; 
-                          ppSamplers: ptr ptr ID3D11SamplerState) {.stdcall.} # 
-                                                                              # [annotation] 
-                                                                              # 
-                                                                              # [annotation] 
-                                                                              # 
-                                                                              # [annotation] 
+                          ppSamplers: ptr ptr ID3D11SamplerState) {.stdcall.}
     Begin*: proc (This: ptr ID3D11DeviceContext; pAsync: ptr ID3D11Asynchronous) {.
         stdcall.}             # [annotation] 
     `End`*: proc (This: ptr ID3D11DeviceContext; pAsync: ptr ID3D11Asynchronous) {.
@@ -4551,11 +4529,6 @@ type
     lpVtbl*: ptr ID3D11DeviceVtbl
 
 
-
-
-# interface __MIDL_itf_d3d11_0000_0041 
-# [local] 
-
 type 
   D3D11_CREATE_DEVICE_FLAG* {.size: sizeof(cint).} = enum 
     D3D11_CREATE_DEVICE_SINGLETHREADED = 0x00000001, 
@@ -4617,8 +4590,7 @@ type
                                    FeatureLevels: UINT; a8: UINT; 
                                    a9: ptr ptr ID3D11Device; 
                                    a10: ptr D3D_FEATURE_LEVEL; 
-                                   a11: ptr ptr ID3D11DeviceContext): HRESULT {.
-      stdcall.}
+                                   a11: ptr ptr ID3D11DeviceContext): HRESULT {.stdcall.}
 
 proc D3D11CreateDevice*(pAdapter: ptr IDXGIAdapter; DriverType: D3D_DRIVER_TYPE; 
                         Software: HMODULE; Flags: UINT; 
@@ -4626,8 +4598,7 @@ proc D3D11CreateDevice*(pAdapter: ptr IDXGIAdapter; DriverType: D3D_DRIVER_TYPE;
                         FeatureLevels: UINT; SDKVersion: UINT; 
                         ppDevice: ptr ptr ID3D11Device; 
                         pFeatureLevel: ptr D3D_FEATURE_LEVEL; 
-                        ppImmediateContext: ptr ptr ID3D11DeviceContext): HRESULT {.
-    stdcall, importc}
+                        ppImmediateContext: ptr ptr ID3D11DeviceContext): HRESULT {.stdcall, importc}
 #/////////////////////////////////////////////////////////////////////////
 # D3D11CreateDeviceAndSwapChain
 # ------------------------------
@@ -4702,191 +4673,7 @@ proc D3D11CreateDeviceAndSwapChain*(pAdapter: ptr IDXGIAdapter;
                                     ppDevice: ptr ptr ID3D11Device; 
                                     pFeatureLevel: ptr D3D_FEATURE_LEVEL; 
                                     ppImmediateContext: ptr ptr ID3D11DeviceContext): HRESULT {.stdcall, importc.}
-var IID_ID3D11DeviceChild* {.importc.}: GUID
 
-var IID_ID3D11DepthStencilState* {.importc.}: GUID
-
-var IID_ID3D11BlendState* {.importc.}: GUID
-
-var IID_ID3D11RasterizerState* {.importc.}: GUID
-
-var IID_ID3D11Resource* {.importc.}: GUID
-
-var IID_ID3D11Buffer* {.importc.}: GUID
-
-var IID_ID3D11Texture1D* {.importc.}: GUID
-
-var IID_ID3D11Texture2D* {.importc.}: GUID
-
-var IID_ID3D11Texture3D* {.importc.}: GUID
-
-var IID_ID3D11View* {.importc.}: GUID
-
-var IID_ID3D11ShaderResourceView* {.importc.}: GUID
-
-var IID_ID3D11RenderTargetView* {.importc.}: GUID
-
-var IID_ID3D11DepthStencilView* {.importc.}: GUID
-
-var IID_ID3D11UnorderedAccessView* {.importc.}: GUID
-
-var IID_ID3D11VertexShader* {.importc.}: GUID
-
-var IID_ID3D11HullShader* {.importc.}: GUID
-
-var IID_ID3D11DomainShader* {.importc.}: GUID
-
-var IID_ID3D11GeometryShader* {.importc.}: GUID
-
-var IID_ID3D11PixelShader* {.importc.}: GUID
-
-var IID_ID3D11ComputeShader* {.importc.}: GUID
-
-var IID_ID3D11InputLayout* {.importc.}: GUID
-
-var IID_ID3D11SamplerState* {.importc.}: GUID
-
-var IID_ID3D11Asynchronous* {.importc.}: GUID
-
-var IID_ID3D11Query* {.importc.}: GUID
-
-var IID_ID3D11Predicate* {.importc.}: GUID
-
-var IID_ID3D11Counter* {.importc.}: GUID
-
-var IID_ID3D11ClassInstance* {.importc.}: GUID
-
-var IID_ID3D11ClassLinkage* {.importc.}: GUID
-
-var IID_ID3D11CommandList* {.importc.}: GUID
-
-var IID_ID3D11DeviceContext* {.importc.}: GUID
-
-var IID_ID3D11VideoDecoder* {.importc.}: GUID
-
-var IID_ID3D11VideoProcessorEnumerator* {.importc.}: GUID
-
-var IID_ID3D11VideoProcessor* {.importc.}: GUID
-
-var IID_ID3D11AuthenticatedChannel* {.importc.}: GUID
-
-var IID_ID3D11CryptoSession* {.importc.}: GUID
-
-var IID_ID3D11VideoDecoderOutputView* {.importc.}: GUID
-
-var IID_ID3D11VideoProcessorInputView* {.importc.}: GUID
-
-var IID_ID3D11VideoProcessorOutputView* {.importc.}: GUID
-
-var IID_ID3D11VideoContext* {.importc.}: GUID
-
-var IID_ID3D11VideoDevice* {.importc.}: GUID
-
-var IID_ID3D11Device* {.importc.}: GUID
-
-var D3D11_KEY_EXCHANGE_RSAES_OAEP* {.importc.}: GUID
-
-var D3D11_AUTHENTICATED_QUERY_PROTECTION* {.importc.}: GUID
-
-var D3D11_AUTHENTICATED_QUERY_CHANNEL_TYPE* {.importc.}: GUID
-
-var D3D11_AUTHENTICATED_QUERY_DEVICE_HANDLE* {.importc.}: GUID
-
-var D3D11_AUTHENTICATED_QUERY_CRYPTO_SESSION* {.importc.}: GUID
-
-var D3D11_AUTHENTICATED_QUERY_RESTRICTED_SHARED_RESOURCE_PROCESS_COUNT* {.importc.}: GUID
-
-var D3D11_AUTHENTICATED_QUERY_RESTRICTED_SHARED_RESOURCE_PROCESS* {.importc.}: GUID
-
-var D3D11_AUTHENTICATED_QUERY_UNRESTRICTED_PROTECTED_SHARED_RESOURCE_COUNT* {.importc.}: GUID
-
-var D3D11_AUTHENTICATED_QUERY_OUTPUT_ID_COUNT* {.importc.}: GUID
-
-var D3D11_AUTHENTICATED_QUERY_OUTPUT_ID* {.importc.}: GUID
-
-var D3D11_AUTHENTICATED_QUERY_ACCESSIBILITY_ATTRIBUTES* {.importc.}: GUID
-
-var D3D11_AUTHENTICATED_QUERY_ENCRYPTION_WHEN_ACCESSIBLE_GUID_COUNT* {.importc.}: GUID
-
-var D3D11_AUTHENTICATED_QUERY_ENCRYPTION_WHEN_ACCESSIBLE_GUID* {.importc.}: GUID
-
-var D3D11_AUTHENTICATED_QUERY_CURRENT_ENCRYPTION_WHEN_ACCESSIBLE* {.importc.}: GUID
-
-var D3D11_AUTHENTICATED_CONFIGURE_INITIALIZE* {.importc.}: GUID
-
-var D3D11_AUTHENTICATED_CONFIGURE_PROTECTION* {.importc.}: GUID
-
-var D3D11_AUTHENTICATED_CONFIGURE_CRYPTO_SESSION* {.importc.}: GUID
-
-var D3D11_AUTHENTICATED_CONFIGURE_SHARED_RESOURCE* {.importc.}: GUID
-
-var D3D11_AUTHENTICATED_CONFIGURE_ENCRYPTION_WHEN_ACCESSIBLE* {.importc.}: GUID
-
-var D3D11_CRYPTO_TYPE_AES128_CTR* {.importc.}: GUID
-
-var D3D11_DECODER_ENCRYPTION_HW_CENC* {.importc.}: GUID
-
-var D3D11_KEY_EXCHANGE_HW_PROTECTION* {.importc.}: GUID
-
-var D3D11_DECODER_PROFILE_MPEG2_MOCOMP* {.importc.}: GUID
-
-var D3D11_DECODER_PROFILE_MPEG2_IDCT* {.importc.}: GUID
-
-var D3D11_DECODER_PROFILE_MPEG2_VLD* {.importc.}: GUID
-
-var D3D11_DECODER_PROFILE_MPEG1_VLD* {.importc.}: GUID
-
-var D3D11_DECODER_PROFILE_MPEG2and1_VLD* {.importc.}: GUID
-
-var D3D11_DECODER_PROFILE_H264_MOCOMP_NOFGT* {.importc.}: GUID
-
-var D3D11_DECODER_PROFILE_H264_MOCOMP_FGT* {.importc.}: GUID
-
-var D3D11_DECODER_PROFILE_H264_IDCT_NOFGT* {.importc.}: GUID
-
-var D3D11_DECODER_PROFILE_H264_IDCT_FGT* {.importc.}: GUID
-
-var D3D11_DECODER_PROFILE_H264_VLD_NOFGT* {.importc.}: GUID
-
-var D3D11_DECODER_PROFILE_H264_VLD_FGT* {.importc.}: GUID
-
-var D3D11_DECODER_PROFILE_H264_VLD_WITHFMOASO_NOFGT* {.importc.}: GUID
-
-var D3D11_DECODER_PROFILE_H264_VLD_STEREO_PROGRESSIVE_NOFGT* {.importc.}: GUID
-
-var D3D11_DECODER_PROFILE_H264_VLD_STEREO_NOFGT* {.importc.}: GUID
-
-var D3D11_DECODER_PROFILE_H264_VLD_MULTIVIEW_NOFGT* {.importc.}: GUID
-
-var D3D11_DECODER_PROFILE_WMV8_POSTPROC* {.importc.}: GUID
-
-var D3D11_DECODER_PROFILE_WMV8_MOCOMP* {.importc.}: GUID
-
-var D3D11_DECODER_PROFILE_WMV9_POSTPROC* {.importc.}: GUID
-
-var D3D11_DECODER_PROFILE_WMV9_MOCOMP* {.importc.}: GUID
-
-var D3D11_DECODER_PROFILE_WMV9_IDCT* {.importc.}: GUID
-
-var D3D11_DECODER_PROFILE_VC1_POSTPROC* {.importc.}: GUID
-
-var D3D11_DECODER_PROFILE_VC1_MOCOMP* {.importc.}: GUID
-
-var D3D11_DECODER_PROFILE_VC1_IDCT* {.importc.}: GUID
-
-var D3D11_DECODER_PROFILE_VC1_VLD* {.importc.}: GUID
-
-var D3D11_DECODER_PROFILE_VC1_D2010* {.importc.}: GUID
-
-var D3D11_DECODER_PROFILE_MPEG4PT2_VLD_SIMPLE* {.importc.}: GUID
-
-var D3D11_DECODER_PROFILE_MPEG4PT2_VLD_ADVSIMPLE_NOGMC* {.importc.}: GUID
-
-var D3D11_DECODER_PROFILE_MPEG4PT2_VLD_ADVSIMPLE_GMC* {.importc.}: GUID
-
-var D3D11_DECODER_PROFILE_HEVC_VLD_MAIN* {.importc.}: GUID
-
-var D3D11_DECODER_PROFILE_HEVC_VLD_MAIN10* {.importc.}: GUID
 
 # Additional Prototypes for ALL interfaces 
 # end of Additional Prototypes
