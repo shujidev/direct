@@ -1,5 +1,5 @@
 
-##### Currently now showing anything
+##### Currently now showing anything in the draw function
 
 import window_winim
 import winim/lean, winim/com
@@ -251,7 +251,7 @@ proc CreateTextureView(d3d11Device:ptr ID3D11Device1):ptr ID3D11ShaderResourceVi
     textureDesc.Height             = UINT texHeight;
     textureDesc.MipLevels          = 1;
     textureDesc.ArraySize          = 1;
-    textureDesc.Format             = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+    textureDesc.Format             = DXGI_FORMAT_R8G8B8A8_UNORM;
     textureDesc.SampleDesc.Count   = 1;
     textureDesc.Usage              = D3D11_USAGE_IMMUTABLE;
     textureDesc.BindFlags          = UINT D3D11_BIND_SHADER_RESOURCE;
@@ -307,11 +307,9 @@ init = proc(hwnd:HWND)=
     inputLayout=CreateInputLayout(d3d11Device, vsBlob)
     (vertexBuffer,numVerts,stride,offset) = CreateVertexBuffer(d3d11Device)
     samplerState = CreateSamplerState(d3d11Device)
-    textureView = CreateTextureView(d3d11Device) #returns ID3D11ShaderResourceView
     
     
 draw = proc(hwnd:HWND) = 
-    
     var backgroundColor = [ 0.1f, 0.2f, 0.6f, 1.0f]
     d3d11DeviceContext.lpVtbl.ClearRenderTargetView(d3d11DeviceContext, d3d11FrameBufferView, backgroundColor);
 
@@ -320,7 +318,7 @@ draw = proc(hwnd:HWND) =
     var viewport = D3D11_VIEWPORT(TopLeftX:0f, TopLeftY:0f, Width:FLOAT(winRect.right - winRect.left), Height:FLOAT(winRect.bottom - winRect.top), MinDepth:0f, MaxDepth:1f)
     d3d11DeviceContext.lpVtbl.RSSetViewports(d3d11DeviceContext, 1, &viewport);
 
-    d3d11DeviceContext.lpVtbl.OMSetRenderTargets(d3d11DeviceContext, 1, &d3d11FrameBufferView, nil);
+    d3d11DeviceContext.lpVtbl.OMSetRenderTargets(d3d11DeviceContext, 1, addr d3d11FrameBufferView, nil);
 
     d3d11DeviceContext.lpVtbl.IASetPrimitiveTopology(d3d11DeviceContext, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     d3d11DeviceContext.lpVtbl.IASetInputLayout(d3d11DeviceContext, inputLayout);
@@ -331,7 +329,7 @@ draw = proc(hwnd:HWND) =
     d3d11DeviceContext.lpVtbl.PSSetShaderResources(d3d11DeviceContext, 0, 1, addr textureView);
     d3d11DeviceContext.lpVtbl.PSSetSamplers(d3d11DeviceContext, 0, 1, addr samplerState);
 
-    d3d11DeviceContext.lpVtbl.IASetVertexBuffers(d3d11DeviceContext, 0, 1, addr vertexBuffer, &stride, &offset);
+    d3d11DeviceContext.lpVtbl.IASetVertexBuffers(d3d11DeviceContext, 0, 1, addr vertexBuffer, addr stride, addr offset);
 
     d3d11DeviceContext.lpVtbl.Draw(d3d11DeviceContext, numVerts, 0);
 
@@ -340,5 +338,4 @@ draw = proc(hwnd:HWND) =
     discard
 
 create_window()
-#~ init(hwnd)
 start_window()
