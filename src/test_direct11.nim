@@ -25,7 +25,7 @@ proc CreateD3D11Device*(): auto =
         var creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT
         var featureLevel: D3D_FEATURE_LEVEL
         #if defined(DEBUG_BUILD)
-        #~ var creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT.UINT or D3D11_CREATE_DEVICE_DEBUG.UINT
+        #~ var creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT.UINT or D3D11_CREATE_DEVICE_DEBUG.UINT  #fails
         #endif
 
         var hResult = D3D11CreateDevice(nil, D3D_DRIVER_TYPE_HARDWARE, 
@@ -310,7 +310,7 @@ init = proc(hwnd:HWND)=
     
     
 draw = proc(hwnd:HWND) = 
-    var backgroundColor = [ 0.1f, 0.2f, 0.6f, 1.0f]
+    var backgroundColor = [0.1f, 0.2f, 0.6f, 1.0f]
     d3d11DeviceContext.lpVtbl.ClearRenderTargetView(d3d11DeviceContext, d3d11FrameBufferView, backgroundColor);
 
     var winRect:RECT
