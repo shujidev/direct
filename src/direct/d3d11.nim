@@ -387,6 +387,7 @@ template MAKE_D3D11_HRESULT*(code: untyped): untyped =
 template MAKE_D3D11_STATUS*(code: untyped): untyped = 
   MAKE_HRESULT(0, U_FACD3D11, code)
 #enums
+const D3D11_APPEND_ALIGNED_ELEMENT* = 0xffffffff'i32
 type
   D3D11_INPUT_CLASSIFICATION* {.size: sizeof(cint).} = enum 
     D3D11_INPUT_PER_VERTEX_DATA = 0, D3D11_INPUT_PER_INSTANCE_DATA = 1

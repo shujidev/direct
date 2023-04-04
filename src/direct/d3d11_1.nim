@@ -1,6 +1,4 @@
-## DirectX bindings by Charlie Barto
-## this mirrors the version of d3d11_1 distributed with windows 10
-# Forward Declarations 
+
 #~ {.link: "dxguid.lib".}
 #~ {.link: "d3d11.lib".}
 import winim/lean

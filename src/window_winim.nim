@@ -1,5 +1,6 @@
 import winim/lean
 
+var init*:proc(hwnd:HWND)
 var draw*:proc(hwnd:HWND)
 var keydown*:proc(hwnd:HWND)
 
@@ -42,15 +43,15 @@ proc start_window*() =
     if class == 0:
         quit("could not create win class " & $GetLastError())
 
-    var wnd: HWND
-    wnd = CreateWindow("Window", "Window", WS_OVERLAPPEDWINDOW,
+    var hwnd: HWND
+    hwnd = CreateWindow("Window", "Window", WS_OVERLAPPEDWINDOW,
                         CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, 0,
                         0, GetModuleHandle(nil), nil)
-    if wnd==0: quit("failed to make hwnd")
+    if hwnd==0: quit("failed to make hwnd")
+    if init!=nil: init(hwnd)
 
-
-    discard ShowWindow(wnd, 10)
-    discard UpdateWindow(wnd)
+    discard ShowWindow(hwnd, 10)
+    discard UpdateWindow(hwnd)
     var message: MSG
     while(message.message != WM_QUIT):
         if PeekMessage(addr message, cast[HWND](nil), 0, 0, PM_REMOVE) > 0:

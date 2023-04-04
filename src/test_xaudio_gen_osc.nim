@@ -85,7 +85,7 @@ proc FillAndSubmit(startIndex, count:int) =
 
     var buffer: XAUDIO2_BUFFER
     buffer.AudioBytes = 2 * BUFFER_LENGTH
-    buffer.pAudioData = cast[ptr BYTE](addr soundData[startIndex])
+    buffer.pAudioData = cast[ptr BYTE](addr soundData[0])
     buffer.Flags = 0
     buffer.PlayBegin = UINT32 startIndex
     buffer.PlayLength = UINT32 count
