@@ -122,10 +122,10 @@ proc CreateFrameBuffer(d3d11Device:ptr ID3D11Device1, d3d11SwapChain:ptr IDXGISw
     var d3d11FrameBufferView:ptr ID3D11RenderTargetView
     block:
         var d3d11FrameBuffer:ptr ID3D11Texture2D
-        var hResult = d3d11SwapChain.lpVtbl.GetBuffer(d3d11SwapChain, 0, &IID_ID3D11Texture2D, cast[ptr pointer](&d3d11FrameBuffer));
+        var hResult = d3d11SwapChain.lpVtbl.GetBuffer(d3d11SwapChain, 0, &IID_ID3D11Texture2D, cast[ptr pointer](addr d3d11FrameBuffer));
         assert(SUCCEEDED(hResult));
 
-        hResult = d3d11Device.lpVtbl.CreateRenderTargetView(d3d11Device, cast[ptr ID3D11Resource](d3d11FrameBuffer), nil, &d3d11FrameBufferView);
+        hResult = d3d11Device.lpVtbl.CreateRenderTargetView(d3d11Device, cast[ptr ID3D11Resource](d3d11FrameBuffer), nil, addr d3d11FrameBufferView);
         assert(SUCCEEDED(hResult));
         discard d3d11FrameBuffer.lpVtbl.Release(d3d11FrameBuffer);
     return d3d11FrameBufferView
@@ -136,7 +136,7 @@ proc CreateVertexShader(d3d11Device:ptr ID3D11Device1): (ptr ID3DBlob, ptr ID3D1
     var vertexShader:ptr ID3D11VertexShader
     block:
         var shaderCompileErrorsBlob:ptr ID3DBlob
-        var hResult = D3DCompileFromFile(L"shaders.hlsl", nil, nil, "vs_main", "vs_5_0", 0, 0, &vsBlob, &shaderCompileErrorsBlob);
+        var hResult = D3DCompileFromFile(L"shaders.hlsl", nil, nil, "vs_main", "vs_5_0", 0, 0, addr vsBlob, addr shaderCompileErrorsBlob);
         if FAILED(hResult):
             var errorString:ptr CHAR
             if hResult == HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND):
@@ -148,7 +148,7 @@ proc CreateVertexShader(d3d11Device:ptr ID3D11Device1): (ptr ID3DBlob, ptr ID3D1
             MessageBoxA(0, errorString, "Shader Compiler Error", MB_ICONERROR or MB_OK);
             return
 
-        hResult = d3d11Device.lpVtbl.CreateVertexShader(d3d11Device, vsBlob.lpVtbl.GetBufferPointer(vsBlob), vsBlob.lpVtbl.GetBufferSize(vsBlob), nil, &vertexShader);
+        hResult = d3d11Device.lpVtbl.CreateVertexShader(d3d11Device, vsBlob.lpVtbl.GetBufferPointer(vsBlob), vsBlob.lpVtbl.GetBufferSize(vsBlob), nil, addr vertexShader);
         assert(SUCCEEDED(hResult));
     return (vsBlob, vertexShader)
 
@@ -158,7 +158,7 @@ proc CreatePixelShader(d3d11Device:ptr ID3D11Device1): ptr ID3D11PixelShader =
     block:
         var psBlob:ptr ID3DBlob
         var shaderCompileErrorsBlob:ptr ID3DBlob
-        var hResult = D3DCompileFromFile(L"shaders.hlsl", nil, nil, "ps_main", "ps_5_0", 0, 0, &psBlob, &shaderCompileErrorsBlob);
+        var hResult = D3DCompileFromFile(L"shaders.hlsl", nil, nil, "ps_main", "ps_5_0", 0, 0, addr psBlob, addr shaderCompileErrorsBlob);
         if FAILED(hResult):
             var errorString:ptr CHAR
             if hResult == HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND):
@@ -170,7 +170,7 @@ proc CreatePixelShader(d3d11Device:ptr ID3D11Device1): ptr ID3D11PixelShader =
             MessageBoxA(0, errorString, "Shader Compiler Error", MB_ICONERROR or MB_OK)
             return
 
-        hResult = d3d11Device.lpVtbl.CreatePixelShader(d3d11Device, psBlob.lpVtbl.GetBufferPointer(psBlob), psBlob.lpVtbl.GetBufferSize(psBlob), nil, &pixelShader);
+        hResult = d3d11Device.lpVtbl.CreatePixelShader(d3d11Device, psBlob.lpVtbl.GetBufferPointer(psBlob), psBlob.lpVtbl.GetBufferSize(psBlob), nil, addr pixelShader);
         assert(SUCCEEDED(hResult));
         discard psBlob.lpVtbl.Release(psBlob);
     return pixelShader
@@ -184,7 +184,7 @@ proc CreateInputLayout(d3d11Device:ptr ID3D11Device1, vsBlob:ptr ID3DBlob):ptr I
             D3D11_INPUT_ELEMENT_DESC(SemanticName:"TEX", SemanticIndex:0, Format:DXGI_FORMAT_R32G32_FLOAT, InputSlot:0, AlignedByteOffset:D3D11_APPEND_ALIGNED_ELEMENT, InputSlotClass:D3D11_INPUT_PER_VERTEX_DATA, InstanceDataStepRate:0)
         ]
 
-        var hResult = d3d11Device.lpVtbl.CreateInputLayout(d3d11Device, addr inputElementDesc[0], UINT len(inputElementDesc), vsBlob.lpVtbl.GetBufferPointer(vsBlob), vsBlob.lpVtbl.GetBufferSize(vsBlob), &inputLayout);
+        var hResult = d3d11Device.lpVtbl.CreateInputLayout(d3d11Device, addr inputElementDesc[0], UINT len(inputElementDesc), vsBlob.lpVtbl.GetBufferPointer(vsBlob), vsBlob.lpVtbl.GetBufferSize(vsBlob), addr inputLayout);
         assert(SUCCEEDED(hResult));
         discard vsBlob.lpVtbl.Release(vsBlob)
     return inputLayout
@@ -202,10 +202,10 @@ proc CreateVertexBuffer(d3d11Device:ptr ID3D11Device1):auto =
             0.5f,  0.5f, 1f, 0f,
             0.5f, -0.5f, 1f, 1f
         ]
-        stride = 4 * sizeof(float);
+        stride = 4 * sizeof(float32);
         numVerts = UINT sizeof(vertexData) div stride;
         offset = 0;
-
+        
         var vertexBufferDesc:D3D11_BUFFER_DESC
         vertexBufferDesc.ByteWidth = UINT sizeof(vertexData);
         vertexBufferDesc.Usage     = D3D11_USAGE_IMMUTABLE;
@@ -213,7 +213,7 @@ proc CreateVertexBuffer(d3d11Device:ptr ID3D11Device1):auto =
 
         var vertexSubresourceData = D3D11_SUBRESOURCE_DATA(pSysMem:addr vertexData[0])
 
-        var hResult = d3d11Device.lpVtbl.CreateBuffer(d3d11Device, &vertexBufferDesc, &vertexSubresourceData, &vertexBuffer);
+        var hResult = d3d11Device.lpVtbl.CreateBuffer(d3d11Device, addr vertexBufferDesc, addr vertexSubresourceData, addr vertexBuffer);
         assert(SUCCEEDED(hResult))
     return (vertexBuffer,numVerts,stride,offset)
 
@@ -231,7 +231,7 @@ proc CreateSamplerState(d3d11Device:ptr ID3D11Device1):ptr ID3D11SamplerState =
     samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 
     var samplerState:ptr ID3D11SamplerState
-    var hResult = d3d11Device.lpVtbl.CreateSamplerState(d3d11Device, &samplerDesc, &samplerState);
+    var hResult = d3d11Device.lpVtbl.CreateSamplerState(d3d11Device, addr samplerDesc, addr samplerState);
     assert(SUCCEEDED(hResult))
     return samplerState
 
@@ -265,7 +265,7 @@ proc CreateTextureView(d3d11Device:ptr ID3D11Device1):ptr ID3D11ShaderResourceVi
     assert(SUCCEEDED(hResult))
 
     var textureView:ptr ID3D11ShaderResourceView
-    hResult = d3d11Device.lpVtbl.CreateShaderResourceView(d3d11Device, cast[ptr ID3D11Resource](texture), nil, &textureView);
+    hResult = d3d11Device.lpVtbl.CreateShaderResourceView(d3d11Device, cast[ptr ID3D11Resource](texture), nil, addr textureView);
     assert(SUCCEEDED(hResult))
 
     #~ stbi.free(testTextureBytes); #no need in Nim
@@ -316,7 +316,7 @@ draw = proc(hwnd:HWND) =
     var winRect:RECT
     GetClientRect(hwnd, &winRect);
     var viewport = D3D11_VIEWPORT(TopLeftX:0f, TopLeftY:0f, Width:FLOAT(winRect.right - winRect.left), Height:FLOAT(winRect.bottom - winRect.top), MinDepth:0f, MaxDepth:1f)
-    d3d11DeviceContext.lpVtbl.RSSetViewports(d3d11DeviceContext, 1, &viewport);
+    d3d11DeviceContext.lpVtbl.RSSetViewports(d3d11DeviceContext, 1, addr viewport);
 
     d3d11DeviceContext.lpVtbl.OMSetRenderTargets(d3d11DeviceContext, 1, addr d3d11FrameBufferView, nil);
 
