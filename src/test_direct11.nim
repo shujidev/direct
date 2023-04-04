@@ -1,6 +1,4 @@
 
-##### Currently now showing anything in the draw function
-
 import window_winim
 import winim/lean, winim/com
 if CoInitializeEx(nil, COINIT_MULTITHREADED)!=S_OK: echo "CoInitializeEx error "
@@ -238,11 +236,12 @@ proc CreateSamplerState(d3d11Device:ptr ID3D11Device1):ptr ID3D11SamplerState =
 import stb_image/read as stbi
 proc CreateTextureView(d3d11Device:ptr ID3D11Device1):ptr ID3D11ShaderResourceView =
     # Load Image
+    echo "loading image"
     var texWidth, texHeight, texNumChannels:int
     var texForceNumChannels = 4'i32
     var testTextureBytes = stbi.load("testTexture.png", texWidth, texHeight, texNumChannels, texForceNumChannels); #char pointer
     assert(testTextureBytes.len!=0);
-    #~ echo (texWidth, texHeight, testTextureBytes.len)
+    echo (texWidth:texWidth, texHeight:texHeight, texNumChannels:texNumChannels, testTextureBytesLEN:testTextureBytes.len)
     var texBytesPerRow = 4 * texWidth;
 
     # Create Texture
@@ -307,6 +306,7 @@ init = proc(hwnd:HWND)=
     inputLayout=CreateInputLayout(d3d11Device, vsBlob)
     (vertexBuffer,numVerts,stride,offset) = CreateVertexBuffer(d3d11Device)
     samplerState = CreateSamplerState(d3d11Device)
+    textureView = CreateTextureView(d3d11Device)
     
     
 draw = proc(hwnd:HWND) = 
