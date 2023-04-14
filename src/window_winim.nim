@@ -5,11 +5,11 @@ var draw*:proc(hwnd:HWND)
 var keydown*:proc(hwnd:HWND)
 
 proc WndProc(hwnd: HWND, message: int32, wp: WPARAM, lp: LPARAM): LRESULT {.stdcall.} =
-    var
-        wmId: cint
-        wmEvent: cint
-        ps: PAINTSTRUCT
-        hdcr: HDC
+    #~ var
+        #~ wmId: cint
+        #~ wmEvent: cint
+        #~ ps: PAINTSTRUCT
+        #~ hdcr: HDC
     case message:
     of WM_LBUTTONDOWN, WM_KEYDOWN:
         if keydown!=nil: keydown(hwnd)
