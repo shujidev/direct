@@ -73,4 +73,5 @@ draw = proc(hwnd:HWND)=
     brush2.release
 
 CreateDeviceIndependentResources()
+create_window()
 start_window()
