@@ -182,4 +182,5 @@ keydown = proc(hwnd:HWND) =
     echo "keydown ",(audioBusy:audioBusy)
     pSourceVoice.playSound(buffer)
     
+create_window()
 start_window()

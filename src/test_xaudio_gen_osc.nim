@@ -122,4 +122,5 @@ var audioCallbackVtbl = IXAudio2VoiceCallbackVtbl(OnVoiceProcessingPassStart : O
 var audioCallback = IXAudio2VoiceCallback(lpVtbl: addr audioCallbackVtbl)
 pSourceVoice = pXAudio2.SawtoothOscillator2(audioCallback)
 
+create_window()
 start_window()

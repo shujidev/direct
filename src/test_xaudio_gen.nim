@@ -52,4 +52,5 @@ buffer.PlayLength = samples
 hr = pSourceVoice.lpVtbl.SubmitSourceBuffer(pSourceVoice, &buffer)
 if hr!=S_OK: echo "SubmitSourceBuffer error ",hr.toHex
   
+create_window()
 start_window()
