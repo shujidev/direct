@@ -337,4 +337,5 @@ draw = proc(hwnd:HWND) =
     assert(SUCCEEDED(hResult))
     discard
 
+create_window()
 start_window()
