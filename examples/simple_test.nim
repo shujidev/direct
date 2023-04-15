@@ -1,10 +1,10 @@
 
 import window_winim
-import winim/lean, winim/com
-if CoInitialize(nil)!=S_OK: echo "CoInitialize error"
+import winim/lean
+#~ import winim/com
+#~ if CoInitialize(nil)!=S_OK: echo "CoInitialize error"
 
-
-import direct/[d2d1, d2dbasetypes]
+import direct/[d2d1]
 
 var d2Factory: ptr ID2D1Factory
 var renderTarget: ptr ID2D1RenderTarget
