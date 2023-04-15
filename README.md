@@ -3,6 +3,20 @@ Nim bindings for Direct 2d C interface, dwrite, deffects, xaudio2, etc.
 
 I have tested most of direct2d including effects so everything should be fine, I might add some examples later.
 
+Examples:
+
+![](examples/simple_test.png)
+![](examples/composition_gradients.png)
+![](examples/shadow.png)
+![](examples/stroke.png)
+![](examples/displacement.png)
+![](examples/effects.png)
+![](examples/line.png)
+![](examples/noise.png)
+![](examples/point_specular.png)
+
+
+
 ### Installation:
 ```nim
 nimble install https://github.com/shujidev/direct
