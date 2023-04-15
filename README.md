@@ -5,15 +5,15 @@ I have tested most of direct2d including effects so everything should be fine, I
 
 Examples:
 
-![](examples/simple_test.png)
-![](examples/composition_gradients.png)
-![](examples/shadow.png)
-![](examples/stroke.png)
-![](examples/displacement.png)
-![](examples/effects.png)
-![](examples/line.png)
-![](examples/noise.png)
-![](examples/point_specular.png)
+![simple_test](examples/simple_test.png)
+![composition_gradients](examples/composition_gradients.png)
+![shadow](examples/shadow.png)
+![stroke](examples/stroke.png)
+![displacement](examples/displacement.png)
+![effects](examples/effects.png)
+![line](examples/line.png)
+![noise](examples/noise.png)
+![point_specular](examples/point_specular.png)
 
 
 
