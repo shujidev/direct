@@ -4,17 +4,16 @@ Nim bindings for Direct 2d C interface, dwrite, deffects, xaudio2, etc.
 I have tested most of direct2d including effects so everything should be fine, I might add some examples later.
 
 Examples:
-
-![simple_test](examples/simple_test.png)
-![composition_gradients](examples/composition_gradients.png)
-![shadow](examples/shadow.png)
-![stroke](examples/stroke.png)
-![displacement](examples/displacement.png)
-![effects](examples/effects.png)
-![line](examples/line.png)
-![noise](examples/noise.png)
-![point_specular](examples/point_specular.png)
-
+<p align="center">
+<img width="700" src="examples/simple_test.png">
+<img width="700" src="examples/composition_gradients.png">
+<img width="700" src="examples/shadow.png">
+<img width="700" src="examples/displacement.png">
+<img width="700" src="examples/effects.png">
+<img width="700" src="examples/line.png">
+<img width="700" src="examples/noise.png">
+<img width="700" src="examples/point_specular.png">
+</p>
 
 
 ### Installation:
