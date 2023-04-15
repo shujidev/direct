@@ -5,7 +5,7 @@ import dcommon
 import dwrite
 import unknwn
 import dxgi
-{.passL: "-L. -ld2d1 -lole32 ".}
+{.passL: "-L. -ld2d1 -lole32".}
 
 #~ proc RGBA_GETALPHA(rgb) = rgb shr 24
 #~ proc RGBA_GETRED(rgb) = (rgb shr 16) and 0xff

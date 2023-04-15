@@ -4,9 +4,11 @@ import winim/lean
 #~ import winim/com
 #~ if CoInitialize(nil)!=S_OK: echo "CoInitialize error"
 
-import direct/[d2d1]
+import direct/[d2d1] #required for drawing
+import direct/[dwrite, dcommon] #required for text drawing and formatting
 
 var d2Factory: ptr ID2D1Factory
+var writeFactory: ptr IDWriteFactory
 var renderTarget: ptr ID2D1RenderTarget
 var brush1, brush2: ptr ID2D1SolidColorBrush
 converter toResource[T](x:ptr T): ptr ID2D1Resource = cast[ptr ID2D1Resource](x)
@@ -19,6 +21,8 @@ proc release(x: ptr ID2D1Resource) =
 proc CreateDeviceIndependentResources() = # Initialize device-independent resources.
     var hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, cast[ptr IID](unsafeAddr IID_ID2D1Factory), nil, addr d2Factory)
     if hr!=S_OK: echo "D2D1CreateFactory error"
+    hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, unsafeAddr IID_IDWriteFactory, addr writeFactory)
+    if hr!=S_OK: echo "DWriteCreateFactory error ",hr.toHex
     
 proc CreateDeviceResources(hwnd: HWND, factory: ptr ID2D1Factory) = # Initialize device-dependent resources.
     var rc: RECT
@@ -64,7 +68,43 @@ draw = proc(hwnd:HWND)=
                         dashOffset:0.1f)
     var hr = d2Factory.lpVtbl.CreateStrokeStyle(d2Factory, addr styleProps, addr dashes[0], len(dashes).UINT32, addr strokeStyle)
     if hr!=S_OK: echo "CreateStrokeStyle error"
-    renderTarget.lpVtbl.DrawLine(renderTarget, D2D1_POINT_2F(x:10f, y:10f), D2D1_POINT_2F(x:100f, y:100f), brush=brush2, strokeWidth=13f, strokeStyle)
+    
+    renderTarget.lpVtbl.DrawLine(renderTarget, D2D1_POINT_2F(x:20f, y:20f), D2D1_POINT_2F(x:200f, y:200f), brush=brush2, strokeWidth=10f, strokeStyle)
+    
+    block:
+        var center = (300f,100f)
+        var radius = (80f,50f)
+        var rect = (center, radius)
+        renderTarget.lpVtbl.FillEllipse(renderTarget, cast[ptr D2D1_ELLIPSE](addr rect), brush=brush1)
+        renderTarget.lpVtbl.DrawEllipse(renderTarget, cast[ptr D2D1_ELLIPSE](addr rect), brush=brush2, strokeWidth=10f, strokeStyle)
+    
+    block:
+        var point1 = (400f,50f)
+        var point2 = (600f,120f)
+        var radius = (20f,20f)
+        var rect = (point1, point2, radius)
+        renderTarget.lpVtbl.FillRoundedRectangle(renderTarget, cast[ptr D2D1_ROUNDED_RECT](addr rect), brush=brush2)
+        renderTarget.lpVtbl.DrawRoundedRectangle(renderTarget, cast[ptr D2D1_ROUNDED_RECT](addr rect), brush=brush1, strokeWidth=10f, strokeStyle)
+    
+    block:
+        var fontFamily = "Arial"
+        var fontSize = 32f
+        var weight = DWRITE_FONT_WEIGHT_NORMAL
+        var style = DWRITE_FONT_STYLE_NORMAL
+        var stretch = DWRITE_FONT_STRETCH_NORMAL
+        var textFormat:ptr IDWriteTextFormat
+        var hr = writeFactory.lpVtbl.CreateTextFormat(writeFactory, family_name=fontFamily, collection=nil, weight, style, stretch, size=fontSize, locale="", addr textFormat)
+        if hr!=S_OK: echo "CreateTextFormat error ",hr.toHex
+        
+        var pos = (700f,50f)
+        var size = (500f,500f)
+        var layout = (pos, pos[0]+size[0], pos[1]+size[1])
+        var text = +$"Helloôòóü\nWorld"
+        renderTarget.lpVtbl.DrawText(renderTarget, text, UINT text.len, textFormat, 
+                        layoutRect=cast[ptr D2D1_RECT_F](addr layout), 
+                        defaultForegroundBrush=brush2, 
+                        options=d2d1.D2D1_DRAW_TEXT_OPTIONS_NONE,  #options:NONE,NO_SNAP,CLIP,ENABLE_COLOR_FONT
+                        measuringMode=dcommon.DWRITE_MEASURING_MODE_NATURAL)
     
     hr = renderTarget.lpVtbl.EndDraw(renderTarget, nil, nil)
     if hr!=S_OK: echo "EndDraw error"

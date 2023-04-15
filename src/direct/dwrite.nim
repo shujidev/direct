@@ -1,6 +1,7 @@
 
 import winim/lean
 import dcommon
+{.passL: "-L. -ldwrite".}
 
 type IDWriteGeometrySink* = object #is a typedef of the ID2D1SimplifiedGeometrySink (can be casted)
 #~ type IDWriteGeometrySink* = ID2D1SimplifiedGeometrySink #is a typedef of the ID2D1SimplifiedGeometrySink (can be casted)
